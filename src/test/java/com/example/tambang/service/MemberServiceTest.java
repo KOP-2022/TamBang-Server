@@ -45,4 +45,17 @@ public class MemberServiceTest {
 
         Assert.fail("예외가 발생해야 한다.");
     }
+
+    @Test
+    @DisplayName("로그인 테스트")
+    public void 로그인() throws Exception{
+        Member member = new Member();
+        member.createMember("test_id", "test_passwd", "kang", "kkkdh", "010-6666-5555", "test@kw.ac.kr");
+
+        memberService.join(member);
+
+        boolean isSuccess = memberService.checkMember("test_id", "test_passwd");
+
+        assertThat(isSuccess).isEqualTo(true);
+    }
 }
