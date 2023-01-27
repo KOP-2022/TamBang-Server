@@ -2,10 +2,8 @@ package com.example.tambang.domain;
 
 import lombok.Getter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "member")
@@ -15,6 +13,9 @@ public class Member {
     @Id
     private String id;
     private String password;
+
+    @OneToMany
+    private List<RealEstate> realEstateList;
 
     private String name;
     private String nickname;
