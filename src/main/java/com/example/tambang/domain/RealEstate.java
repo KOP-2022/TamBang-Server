@@ -11,8 +11,8 @@ public class RealEstate {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    private Member member;
+    @ManyToOne
+    private Member member; // member 1 : N real estate
 
     //위치 정보
     private String sigungu;
