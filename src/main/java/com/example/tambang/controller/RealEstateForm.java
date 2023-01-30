@@ -19,4 +19,5 @@ public class RealEstateForm {
     private int deposit;
     private int monthlyPay;
     private String description;
+    private String memberId;
 }

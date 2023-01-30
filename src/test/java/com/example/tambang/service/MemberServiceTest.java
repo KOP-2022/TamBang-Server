@@ -34,28 +34,32 @@ public class MemberServiceTest {
     @Test(expected = IllegalStateException.class)
     @DisplayName("중복된 아이디의 회원 등록")
     public void 중복_회원_등록() throws Exception {
+        //given
         Member member1 = new Member();
         Member member2 = new Member();
-
         member1.createMember("test_id", "test_passwd", "kang", "kkkdh", "010-6666-5555", "test@kw.ac.kr");
         member2.createMember("test_id", "test_passwd", "kong", "kkkdh1", "010-6666-5555", "test@kw.ac.kr");
 
+        //when
         memberService.join(member1);
         memberService.join(member2);
 
+        //then
         Assert.fail("예외가 발생해야 한다.");
     }
 
     @Test
     @DisplayName("로그인 테스트")
     public void 로그인() throws Exception{
+        //given
         Member member = new Member();
         member.createMember("test_id", "test_passwd", "kang", "kkkdh", "010-6666-5555", "test@kw.ac.kr");
 
+        //when
         memberService.join(member);
-
         boolean isSuccess = memberService.checkMember("test_id", "test_passwd");
 
+        //then
         assertThat(isSuccess).isEqualTo(true);
     }
 }

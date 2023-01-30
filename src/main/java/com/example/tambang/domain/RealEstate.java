@@ -13,6 +13,7 @@ public class RealEstate {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "member_id")
     private Member member; // member 1 : N real estate
 
     //위치 정보
@@ -35,7 +36,7 @@ public class RealEstate {
     private String description;
     private String image; //이미지는 어떻게 처리할지 고민중
 
-    public void CreateRealEstate(String sigungu, String roadName, String buildType, int floor, double area, String dealType, int price, int deposit, int monthlyPay, String description, String image) {
+    public void createRealEstate(String sigungu, String roadName, String buildType, int floor, double area, String dealType, int price, int deposit, int monthlyPay, String description, String image) {
         this.sigungu = sigungu;
         this.roadName = roadName;
         this.buildType = buildType;
@@ -49,9 +50,26 @@ public class RealEstate {
         this.image = image;
     }
 
-
-
-
-
-
+    @Override
+    public String toString() {
+        return "RealEstate{" +
+                "id=" + id +
+                ", member=" + member +
+                ", sigungu='" + sigungu + '\'' +
+                ", roadName='" + roadName + '\'' +
+                ", buildType='" + buildType + '\'' +
+                ", floor=" + floor +
+                ", area=" + area +
+                ", dealType='" + dealType + '\'' +
+                ", price=" + price +
+                ", deposit=" + deposit +
+                ", monthlyPay=" + monthlyPay +
+                ", description='" + description + '\'' +
+                ", image='" + image + '\'' +
+                '}';
+    }
+    //집주인을 설정
+    public void setOwner(Member member){
+        this.member = member;
+    }
 }

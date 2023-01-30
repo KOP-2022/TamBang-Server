@@ -1,5 +1,6 @@
 package com.example.tambang.service;
 
+import com.example.tambang.domain.Member;
 import com.example.tambang.domain.RealEstate;
 import com.example.tambang.repository.RealEstateRepository;
 import org.junit.Assert;
@@ -26,12 +27,17 @@ public class RealEstateServiceTest {
     public void 매물등록() throws Exception {
         //given
         RealEstate realEstate = new RealEstate();
-        realEstate.CreateRealEstate("서울시 노원구","광운로 15길 14", "빌라", 3, 4.1, "전세",0,1000000000,0,"집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
+        realEstate.createRealEstate("서울시 노원구","광운로 15길 14", "빌라", 3, 4.1, "전세",0,1000000000,0,"집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
+
+        Member member = new Member();
+        member.createMember("test_id", "test_passwd", "kang", "kkkdh", "010-6666-5555", "test@kw.ac.kr");
+
         //when
-        Long savedId = realEstateService.register(realEstate);
+        Long savedId = realEstateService.register(realEstate, "test_id");
 
         //then
         assertEquals(realEstate, realEstateRepository.findOne(savedId));
-     }
+    }
+
 
 }

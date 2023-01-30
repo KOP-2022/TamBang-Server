@@ -14,9 +14,6 @@ public class Member {
     private String id;
     private String password;
 
-    @OneToMany
-    private List<RealEstate> realEstateList;
-
     private String name;
     private String nickname;
 
