@@ -23,12 +23,22 @@ public class MemberController {
         Member member = new Member();
         member.createMember(form.getId(), form.getPassword(), form.getName(), form.getNickname(), form.getPhoneNumber(), form.getEmail());
 
-        String memberId = memberService.join(member);
-
         //반환할 정보를 hashmap으로 생성 {"success" : "true"}
         Map<String, Object> returnData = new HashMap<>();
+
+        try{
+            //중복된 아이디로 가입하는 경우 IllegalStateException 발생
+            String memberId = memberService.join(member);
+        }
+        catch(IllegalStateException e){
+            String msg = "회원 가입에 실패했습니다.";
+            returnData.put("success", false);
+            returnData.put("message", msg);
+
+            return returnData;
+        }
+        //성공한 경우 "success" : "true" 반환하도록 한다.
         returnData.put("success", true);
-        returnData.put("member_id", memberId);
 
         return returnData;
     }
