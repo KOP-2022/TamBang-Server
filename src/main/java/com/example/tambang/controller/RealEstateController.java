@@ -17,7 +17,7 @@ public class RealEstateController {
 
     //@RequestPart 어노테이션을 활용해 여러 유형의 request body를 한 번에 매핑할 수 있다.
     @PostMapping("/real-estate")
-    public Object enroll(@RequestPart RealEstateForm form, @RequestPart MultipartFile file){
+    public Object enroll(@RequestPart(name = "form", required=true) RealEstateForm form, @RequestPart(name = "file", required=true) MultipartFile file){
         RealEstate realEstate = new RealEstate();
         String ownerId = form.getMemberId();
 
