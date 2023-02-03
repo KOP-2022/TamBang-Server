@@ -14,14 +14,14 @@ public class RealEstateService {
     private final RealEstateRepository realEstateRepository;
 
     //매물 등록
-    @Transactional
-    public Long register(RealEstate realEstate){
-        realEstateRepository.save(realEstate);
+    @Transactional(readOnly = false)
+    public Long register(RealEstate realEstate, String member_id){
+        realEstateRepository.save(realEstate, member_id);
         return realEstate.getId();
     }
     //매물 id 기반 매물 조회
-    public RealEstate findOne(Long real_estate_id){
-        return realEstateRepository.findOne(real_estate_id);
+    public RealEstate findOne(Long realEstateId){
+        return realEstateRepository.findOne(realEstateId);
     }
 
 }
