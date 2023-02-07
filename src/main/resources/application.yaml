@@ -7,7 +7,7 @@ spring:
   ## JPA Setting Info
   jpa:
     hibernate:
-      ddl-auto: create  # option type: create, create-drop, update, validate, none
+      ddl-auto: update  # option type: create, create-drop, update, validate, none
     properties:
       hibernate:
         show_sql: true  # sql 쿼리를 보여줍니다.
