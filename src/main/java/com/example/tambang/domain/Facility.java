@@ -16,6 +16,10 @@ public class Facility {
     private FacilityType facilityType;
 
     //편의시설 좌표 정보
-    private Float longitude;
-    private Float langitude;
+    private Double longitude;
+    private Double latitude;
+
+    public void createFacility(Double latitude, Double longitude){
+
+    }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class Member {
 
-    @Id
+    @Id //직접 생성한 값을 기본키로 설정한다.
     private String id;
     private String password;
 
