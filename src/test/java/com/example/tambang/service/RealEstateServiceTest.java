@@ -30,10 +30,10 @@ public class RealEstateServiceTest {
         realEstate.createRealEstate("서울시 노원구","광운로 15길 14", "빌라", 3, 4.1, "전세",0,1000000000,0,"집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
 
         Member member = new Member();
-        member.createMember("test_id", "test_passwd", "kang", "kkkdh", "010-6666-5555", "test@kw.ac.kr");
+        member.createMember("test_id@kw.ac.kr", "test_passwd", "kang", "kkkdh", "010-6666-5555");
 
         //when
-        Long savedId = realEstateService.register(realEstate, "test_id");
+        Long savedId = realEstateService.register(realEstate, "test_id@kw.ac.kr");
 
         //then
         assertEquals(realEstate, realEstateRepository.findOne(savedId));
