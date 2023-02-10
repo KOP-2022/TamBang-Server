@@ -1,9 +1,22 @@
 package com.example.tambang.service;
 
+import com.example.tambang.domain.Facility;
+import com.example.tambang.repository.FacilityRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FacilityService {
+
+    private final FacilityRepository facilityRepository;
+
+    @Transactional(readOnly = false)
+    public void enroll(Facility facility){
+        facilityRepository.enroll(facility);
+    }
 
     //두 좌표 사이의 거리를 구하는 메서드
     public double getDistance(double aLat, double aLon, double bLat, double bLon){

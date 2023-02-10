@@ -19,7 +19,10 @@ public class Facility {
     private Double longitude;
     private Double latitude;
 
-    public void createFacility(Double latitude, Double longitude){
-
+    public void createFacility(Double latitude, Double longitude, FacilityType type){
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.facilityType = type;
     }
+
 }

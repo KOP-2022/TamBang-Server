@@ -1,6 +1,8 @@
 package com.example.tambang.service;
 
 import com.example.tambang.domain.Facility;
+import com.example.tambang.domain.FacilityType;
+import com.example.tambang.domain.Member;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,6 @@ public class FacilityServiceTest {
         Facility facility1 = new Facility();
         Facility facility2 = new Facility();
 
-//        facility1.createFacility
         //광운대 정문
         double kw_latitude = 37.61905576090399;
         double kw_longitude = 127.0582715974131;
@@ -31,6 +32,11 @@ public class FacilityServiceTest {
         double des_latitude = 37.61963159909614;
         double des_longitude = 127.05985783472804;
 
+        //엔티티를 이용한 방식으로 테스트?? -> 굳이 필요 없는 것 같다.
+        facility1.createFacility(kw_latitude, kw_longitude, FacilityType.편의점);
+        facility2.createFacility(des_latitude, des_longitude, FacilityType.편의점);
+
         System.out.println(facilityService.getDistance(kw_latitude, kw_longitude, des_latitude, des_longitude));
     }
+
 }
