@@ -1,7 +1,6 @@
 package com.example.tambang.service;
 
 import com.example.tambang.domain.Member;
-import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -18,14 +20,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class MemberServiceTest {
 
-    @Autowired MemberService memberService;
+    @Autowired
+    MemberServiceImpl memberService;
 
     @Test
     @DisplayName("회원등록")
     public void 회원등록() throws Exception {
         System.out.println("test start!!");
         Member member = new Member();
-        member.createMember("test_id", "test_passwd", "kang", "kkkdh", "010-6666-5555", "test@kw.ac.kr");
+        member.createMember("test_id", "test_passwd", "kang", "kkkdh", "010-6666-5555");
 
         String memberId = memberService.join(member);
         assertThat(memberId).isEqualTo("test_id");
@@ -37,8 +40,8 @@ public class MemberServiceTest {
         //given
         Member member1 = new Member();
         Member member2 = new Member();
-        member1.createMember("test_id", "test_passwd", "kang", "kkkdh", "010-6666-5555", "test@kw.ac.kr");
-        member2.createMember("test_id", "test_passwd", "kong", "kkkdh1", "010-6666-5555", "test@kw.ac.kr");
+        member1.createMember("test_id", "test_passwd", "kang", "kkkdh", "010-6666-5555");
+        member2.createMember("test_id", "test_passwd", "kong", "kkkdh1", "010-6666-5555");
 
         //when
         memberService.join(member1);
@@ -53,13 +56,28 @@ public class MemberServiceTest {
     public void 로그인() throws Exception{
         //given
         Member member = new Member();
-        member.createMember("test_id", "test_passwd", "kang", "kkkdh", "010-6666-5555", "test@kw.ac.kr");
+        member.createMember("test_id@kw.ac.kr", "test_passwd", "kang", "kkkdh", "010-6666-5555");
+        memberService.join(member);
 
         //when
+        Optional<Member> findMember = memberService.login("test_id@kw.ac.kr", "test_passwd");
+        Member member1 = findMember.get();
+        //then
+        assertThat(member1).isInstanceOf(Member.class);
+    }
+
+    @Test
+    @DisplayName("로그인 실패하는 경우")
+    public void 로그인_실패() {
+        //given
+        Member member = new Member();
+        member.createMember("test_id@kw.ac.kr", "test_passwd", "kang", "kkkdh", "010-6666-5555");
         memberService.join(member);
-        boolean isSuccess = memberService.checkMember("test_id", "test_passwd");
+
+        //when
+        Optional<Member> loginMember = memberService.login("test_id@kw.ac.kr", "test");
 
         //then
-        assertThat(isSuccess).isEqualTo(true);
+        assertThat(loginMember).isEqualTo(Optional.empty());
     }
 }
