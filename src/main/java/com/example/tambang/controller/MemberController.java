@@ -2,6 +2,7 @@ package com.example.tambang.controller;
 
 import com.example.tambang.domain.Member;
 import com.example.tambang.service.MemberService;
+import com.example.tambang.service.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +19,10 @@ public class MemberController {
 
     @PostMapping("/member")
     public Map<String, Object> createMember(@RequestBody MemberForm form){
-        System.out.println("param: " + form.getId() + " " + form.getPassword());
+        System.out.println("param: " + form.getEmail() + " " + form.getPassword());
 
         Member member = new Member();
-        member.createMember(form.getId(), form.getPassword(), form.getName(), form.getNickname(), form.getPhoneNumber(), form.getEmail());
+        member.createMember(form.getEmail(), form.getPassword(), form.getName(), form.getNickname(), form.getPhoneNumber());
 
         //반환할 정보를 hashmap으로 생성 {"success" : "true"}
         Map<String, Object> returnData = new HashMap<>();
