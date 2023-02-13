@@ -1,19 +1,9 @@
 package com.example.tambang.repository;
 
 import com.example.tambang.domain.Facility;
-import com.example.tambang.domain.Member;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import com.example.tambang.domain.RealEstateFacility;
 
-import javax.persistence.EntityManager;
-
-@Repository
-@RequiredArgsConstructor
-public class FacilityRepository {
-
-    private final EntityManager em;
-
-    public void enroll(Facility facility){
-        em.persist(facility);
-    }
+public interface FacilityRepository {
+    void enrollWithRealEstate(Facility facility, RealEstateFacility realEstateFacility);
+    boolean check(String id);
 }
