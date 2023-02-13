@@ -1,6 +1,8 @@
 package com.example.tambang.controller;
 
 import com.example.tambang.configuration.properties.KakaoProperties;
+import com.example.tambang.domain.RealEstate;
+import com.example.tambang.service.RealEstateServiceImpl;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import lombok.RequiredArgsConstructor;
@@ -16,56 +18,30 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/facility/*")
+@RequestMapping("/facilities")
 public class FacilityController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final KakaoProperties kakaoProperties;
-    /*
+    private final RealEstateServiceImpl realEstateService;
     @PostMapping("/search")
-    public String as(@RequestBody FacilityForm form){
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("y", form.getLatitude()); // y는 위도이다.
-        params.add("x", form.getLongitude()); // x는 경도이다.
-        params.add("category_group_code", "CS2");
-        params.add("radius", "2000"); //근방 2km의 편의점을 조회
-
-        //카카오 로컬 api로부터 편의시설 정보를 얻어온다.
-        Mono<String> mono = WebClient.builder().baseUrl("https://dapi.kakao.com")
-                .build().get()
-                .uri(builder -> builder.path("/v2/local/search/category.json")
-                        .queryParams(params)
-                        .build()
-                )
-                .header("Authorization", "KakaoAK " + kakaoProperties.getRestapi())
-                .exchangeToMono(response -> {
-                    return response.bodyToMono(String.class);
-                });
-        System.out.println("mono =" + mono.block());
-        return mono.block();
-    }
-    */
-    @PostMapping("/search")
-    public void search(@RequestBody FacilityForm form) {
+    public void search(@RequestPart Form.RealEstateForm form, @RequestPart String email) {
         String is_end = "false";
+
         int page = 0;
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("y", form.getLatitude()); // y는 위도이다.
         params.add("x", form.getLongitude()); // x는 경도이다.
         params.add("page", "0");
         params.add("category_group_code", "CS2");
-        params.add("radius", "20000"); //근방 2km의 편의점을 조회
+        params.add("radius", "500"); //근방 500m
         params.add("sort", "distance");
 
         RestTemplate rest = new RestTemplate();
@@ -76,8 +52,11 @@ public class FacilityController {
 
         HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
 
+        //편의시설 결과를 담을 map 자료 구조를 저장한다.
+        List<JSONObject> results = new ArrayList<>();
+
         while (is_end == "false") {
-            page+=1;
+            page += 1;
             params.remove("page");
             params.add("page", Integer.toString(page));
 
@@ -115,13 +94,29 @@ public class FacilityController {
                 for (int i = 0; i < docu.size(); i++) {
                     JSONObject temp = (JSONObject) docu.get(i);
                     logger.info("편의점 :: {}", temp);
+                    results.add(temp);
                 }
             }
             is_end = String.valueOf(meta.get("is_end"));
-            logger.info("is_end :: {}",is_end);
+            logger.info("is_end :: {}", is_end);
         }
-    }
+        for (JSONObject result : results) {
+            System.out.println("result.toString() = " + result.toString());
+        }
 
+        RealEstate realEstate = new RealEstate();
+        realEstate.createRealEstate(form.getSigungu(),
+                Double.parseDouble(form.getLatitude()), Double.parseDouble(form.getLongitude()),
+                form.getRoadName(), form.getBuildType(),
+                form.getFloor(), form.getArea(),
+                form.getDealType(), form.getPrice(),
+                form.getDeposit(), form.getMonthlyPay(), form.getDescription(),
+                ""
+        );
+
+//        realEstateService.register(realEstate, "kkkdh@kw");
+        realEstateService.registerWithFacility(results, realEstate, email);
+    }
 
 
 }
