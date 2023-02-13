@@ -9,8 +9,10 @@ import javax.persistence.*;
 public class RealEstate {
     //autoIncrement
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "real_estate_id")
     private Long id;
+
+    private Double latitude;
+    private Double longitude;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -36,8 +38,10 @@ public class RealEstate {
     private String description;
     private String image; //이미지는 어떻게 처리할지 고민중
 
-    public void createRealEstate(String sigungu, String roadName, String buildType, int floor, double area, String dealType, int price, int deposit, int monthlyPay, String description, String image) {
+    public void createRealEstate(String sigungu, Double latitude, Double longitude, String roadName, String buildType, int floor, double area, String dealType, int price, int deposit, int monthlyPay, String description, String image) {
         this.sigungu = sigungu;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.roadName = roadName;
         this.buildType = buildType;
         this.floor = floor;

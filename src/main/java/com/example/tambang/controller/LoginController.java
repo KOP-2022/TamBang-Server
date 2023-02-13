@@ -6,6 +6,7 @@ import com.example.tambang.service.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,12 +17,13 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/login")
 public class LoginController {
 
     private final MemberService memberService;
 
-    @PostMapping("/login") //json을 반환하는 post request handler
-    public Map<String, Object> login(HttpServletRequest request, @RequestBody LoginForm form){
+    @PostMapping("/form") //json을 반환하는 post request handler
+    public Map<String, Object> login(HttpServletRequest request, @RequestBody Form.LoginForm form){
         Optional<Member> member = memberService.login(form.getEmail(), form.getPassword());
         Map<String, Object> responseBody = new HashMap<>();
 
