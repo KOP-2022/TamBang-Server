@@ -25,7 +25,7 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/facilities")
+@RequestMapping("/facilities/*")
 public class FacilityController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

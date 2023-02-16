@@ -29,7 +29,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/real-estates")
+@RequestMapping("/real-estates/*")
 public class RealEstateController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -41,6 +41,8 @@ public class RealEstateController {
     public void search(@RequestPart(name = "form", required=true)  Form.RealEstateForm form, @RequestPart(name = "file", required=false) MultipartFile file, @RequestPart String email) {
         String is_end = "false";
 
+        System.out.println("form.toString() = " + form.toString());
+        
         int page = 0;
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("y", form.getLatitude()); // y는 위도이다.
@@ -124,10 +126,16 @@ public class RealEstateController {
         realEstateService.registerWithFacility(results, realEstate, email);
     }
 
-    @GetMapping("/:id")
-    public Map<String, Object> getRealEstateInfo(@PathVariable(name="id") Long realEstateId){
+    @GetMapping("/{real-estate-id}")
+    public ResponseVO.RealEstateResponse getRealEstateInfo(@PathVariable(name="real-estate-id") Long realEstateId){
         HashMap<String, Object> map = new HashMap<>();
 
-        return map;
+        RealEstate findRealEstate = realEstateService.findOne(realEstateId);
+
+        Address address = new Address(findRealEstate.getSigungu(), findRealEstate.getRoadName());
+        BuildInfo buildInfo = new BuildInfo(findRealEstate.getBuildType(), findRealEstate.getFloor(), findRealEstate.getArea(), findRealEstate.getDealType(),
+                findRealEstate.getPrice(), findRealEstate.getDeposit(), findRealEstate.getMonthlyPay());
+
+        return new ResponseVO.RealEstateResponse(address, buildInfo, findRealEstate.getDescription(), findRealEstate.getMember().getEmail());
     }
 }

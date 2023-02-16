@@ -14,7 +14,7 @@ public class RealEstate {
     private Double latitude;
     private Double longitude;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member; // member 1 : N real estate
 
@@ -24,21 +24,19 @@ public class RealEstate {
     private String buildType;
     
     //건물 정보
-    private int floor; //층
-    private double area; //면적(제곱미터)
-    
-    private String dealType;
-
-    private int price; //매매금
-    private int deposit; //계약금(보증금)
+    private Long floor; //층
+    private Double area; //면적(제곱미터)
+    private String dealType; //거래 종류(매매, 전세, 월세), 추후에 enum type으로 변경할듯
+    private Long price; //매매금
+    private Long deposit; //계약금(보증금)
 
     @Column(name = "monthly_pay")
-    private int monthlyPay;
+    private Long monthlyPay;
 
     private String description;
     private String image; //이미지는 어떻게 처리할지 고민중
 
-    public void createRealEstate(String sigungu, Double latitude, Double longitude, String roadName, String buildType, int floor, double area, String dealType, int price, int deposit, int monthlyPay, String description, String image) {
+    public void createRealEstate(String sigungu, Double latitude, Double longitude, String roadName, String buildType, Long floor, Double area, String dealType, Long price, Long deposit, Long monthlyPay, String description, String image) {
         this.sigungu = sigungu;
         this.latitude = latitude;
         this.longitude = longitude;
