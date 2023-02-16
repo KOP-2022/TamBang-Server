@@ -14,12 +14,10 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/members")
 public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/form")
     public Map<String, Object> createMember(@RequestBody Form.MemberForm form){
         System.out.println("param: " + form.getEmail() + " " + form.getPassword());
 
