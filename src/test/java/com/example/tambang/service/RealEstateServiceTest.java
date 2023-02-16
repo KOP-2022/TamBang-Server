@@ -38,7 +38,7 @@ public class RealEstateServiceTest {
         double kw_latitude = 37.61905576090399;
         double kw_longitude = 127.0582715974131;
         realEstate.createRealEstate("서울시 노원구", kw_latitude, kw_longitude, "광운로 15길 14",
-                "빌라", 3, 4.1, "전세",0,1000000000,0,
+                "빌라", 3L, 4.1, "전세",0L,1000000000L,0L,
                 "집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
 
         Member member = new Member();
@@ -59,7 +59,7 @@ public class RealEstateServiceTest {
         double test_latitude = 37.61905576090399;
         double test_longitude = 127.0582715974131;
         realEstate.createRealEstate("서울시 노원구", test_latitude, test_longitude, "광운로 15길 14",
-                "빌라", 3, 4.1, "전세",0,1000000000,0,
+                "빌라", 3L, 4.1, "전세",0L,1000000000L,0L,
                 "집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
 
         Member member = new Member();
@@ -83,7 +83,7 @@ public class RealEstateServiceTest {
         double test_latitude = 37.61905576090399;
         double test_longitude = 127.0582715974131;
         realEstate.createRealEstate("서울시 노원구", test_latitude, test_longitude, "광운로 15길 14",
-                "빌라", 3, 4.1, "전세",0,1000000000,0,
+                "빌라", 3L, 4.1, "전세",0L,1000000000L,0L,
                 "집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
 
         Member member = new Member();
