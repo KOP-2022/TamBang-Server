@@ -14,7 +14,7 @@ public class RealEstate {
     private Double latitude;
     private Double longitude;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member; // member 1 : N real estate
 
@@ -26,9 +26,7 @@ public class RealEstate {
     //건물 정보
     private int floor; //층
     private double area; //면적(제곱미터)
-    
-    private String dealType;
-
+    private String dealType; //거래 종류(매매, 전세, 월세), 추후에 enum type으로 변경할듯
     private int price; //매매금
     private int deposit; //계약금(보증금)
 

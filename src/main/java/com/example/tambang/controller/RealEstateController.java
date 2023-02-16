@@ -124,9 +124,12 @@ public class RealEstateController {
         realEstateService.registerWithFacility(results, realEstate, email);
     }
 
-    @GetMapping("/:id")
-    public Map<String, Object> getRealEstateInfo(@PathVariable(name="id") Long realEstateId){
+    @GetMapping("/:real-estate-id")
+    public Map<String, Object> getRealEstateInfo(@PathVariable(name="real-estate-id") Long realEstateId){
         HashMap<String, Object> map = new HashMap<>();
+
+        RealEstate findRealEstate = realEstateService.findOne(realEstateId);
+
 
         return map;
     }
