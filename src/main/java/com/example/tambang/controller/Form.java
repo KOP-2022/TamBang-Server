@@ -51,14 +51,33 @@ public abstract class Form {
         private String sigungu;
         private String roadName;
         private String buildType;
-        private int floor;
-        private Float area;
+        private Long floor;
+        private Double area;
         private String dealType;
-        private int price;
-        private int deposit;
-        private int monthlyPay;
+        private Long price;
+        private Long deposit;
+        private Long monthlyPay;
         private String description;
         private String memberId;
+
+        @Override
+        public String toString() {
+            return "RealEstateForm{" +
+                    "latitude='" + latitude + '\'' +
+                    ", longitude='" + longitude + '\'' +
+                    ", sigungu='" + sigungu + '\'' +
+                    ", roadName='" + roadName + '\'' +
+                    ", buildType='" + buildType + '\'' +
+                    ", floor=" + floor +
+                    ", area=" + area +
+                    ", dealType='" + dealType + '\'' +
+                    ", price=" + price +
+                    ", deposit=" + deposit +
+                    ", monthlyPay=" + monthlyPay +
+                    ", description='" + description + '\'' +
+                    ", memberId='" + memberId + '\'' +
+                    '}';
+        }
     }
 
 }
