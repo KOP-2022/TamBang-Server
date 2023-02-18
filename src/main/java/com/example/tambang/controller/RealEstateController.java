@@ -29,7 +29,6 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/real-estates/*")
 public class RealEstateController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -37,7 +36,7 @@ public class RealEstateController {
     private final RealEstateServiceImpl realEstateService;
 
     //@RequestPart 어노테이션을 활용해 여러 유형의 request body를 한 번에 매핑할 수 있다.
-    @PostMapping("/form")
+    @PostMapping("/real-estates")
     public void search(@RequestPart(name = "form", required=true)  Form.RealEstateForm form, @RequestPart(name = "file", required=false) MultipartFile file, @RequestPart String email) {
         String is_end = "false";
 
@@ -126,11 +125,11 @@ public class RealEstateController {
         realEstateService.registerWithFacility(results, realEstate, email);
     }
 
-    @GetMapping("/{real-estate-id}")
+    @GetMapping("/real-estates/{real-estate-id}")
     public ResponseVO.RealEstateResponse getRealEstateInfo(@PathVariable(name="real-estate-id") Long realEstateId){
         HashMap<String, Object> map = new HashMap<>();
 
-        RealEstate findRealEstate = realEstateService.findOne(realEstateId);
+        RealEstate findRealEstate = realEstateService.findOneById(realEstateId);
 
         Address address = new Address(findRealEstate.getSigungu(), findRealEstate.getRoadName());
         BuildInfo buildInfo = new BuildInfo(findRealEstate.getBuildType(), findRealEstate.getFloor(), findRealEstate.getArea(), findRealEstate.getDealType(),
