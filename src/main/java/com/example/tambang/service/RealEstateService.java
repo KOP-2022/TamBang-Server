@@ -14,7 +14,7 @@ public interface RealEstateService {
     
     RealEstate findOne(Long realEstateId);    
 
-    RealEstate findOneById(Long realEstateId);
+    //RealEstate findOneById(Long realEstateId);
 
     void registerWithFacility(List<JSONObject> facilities, RealEstate realEstate, String memberEmail);
 
