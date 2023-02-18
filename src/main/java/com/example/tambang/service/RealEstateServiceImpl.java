@@ -31,7 +31,7 @@ public class RealEstateServiceImpl implements RealEstateService{
 
     //매물 id 기반 매물 조회
     @Override
-    public RealEstate findOne(Long realEstateId){
+    public RealEstate findOneById(Long realEstateId){
         return realEstateRepository.findOne(realEstateId);
     }
 
