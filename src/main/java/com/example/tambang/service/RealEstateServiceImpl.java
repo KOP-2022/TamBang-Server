@@ -28,7 +28,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true) //읽기 전용
@@ -56,9 +58,12 @@ public class RealEstateServiceImpl implements RealEstateService {
 
     @Transactional(readOnly = false)
     @Override
-    public void registerWithFacility(List<JSONObject> facilities, RealEstate realEstate, String memberEmail) {
+    public void registerWithFacility(List<JSONObject> facilities, RealEstate realEstate, String memberEmail, String category_group_code) {
         //회원 정보와 함께 새로운 매물을 등록한다.
         realEstateRepository.save(realEstate, memberEmail);
+
+        //객체 생성
+        FacilityCategory category = FacilityCategory.편의점;
 
         //리스트로 받아온 편의시설을 새로 등록 (매물과 인접한 거리에 있는 편의시설에 대한 등록)
         for (JSONObject object : facilities) {
@@ -66,7 +71,7 @@ public class RealEstateServiceImpl implements RealEstateService {
 
             //JSONObject 객체의 정보를 Facility entity 객체에 바인딩
             facility.createFacility(Double.parseDouble(String.valueOf(object.get("x"))), Double.parseDouble(String.valueOf(object.get("y"))),
-                    String.valueOf(object.get("address_name")), FacilityCategory.편의점,
+                    String.valueOf(object.get("address_name")), category.getFacility(category_group_code),
                     String.valueOf(object.get("id")), String.valueOf(object.get("phone")),
                     String.valueOf(object.get("place_name")), String.valueOf(object.get("place_url")),
                     String.valueOf(object.get("road_address_name")));
@@ -97,7 +102,7 @@ public class RealEstateServiceImpl implements RealEstateService {
         params.add("y", form.getLatitude()); // y는 위도이다.
         params.add("x", form.getLongitude()); // x는 경도이다.
         params.add("page", "0");
-        params.add("category_group_code", "CS2");
+        //params.add("category_group_code", "CS2");
         params.add("radius", "500"); //근방 500m
         params.add("sort", "distance");
 
@@ -107,83 +112,93 @@ public class RealEstateServiceImpl implements RealEstateService {
     @Transactional(readOnly = false)
     @Override
     public List<JSONObject> getFacilityResponse(MultiValueMap<String, String> params, Form.RealEstateForm form, String email) {
+            //category_group_code array
+            String[] category_code = {"CS2","FD6","CE7"};
 
-        String is_end = "false";
-        int page = 0;
+            //편의시설 결과 전부를 담을 map 자료 구조를 저장한다.
+            List<JSONObject> Last = new ArrayList<>();
 
-        RestTemplate rest = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
+        for (String code : category_code) {
+            params.set("category_group_code", code);
+            String is_end = "false";
+            int page = 0;
 
-        //헤더 세팅
-        httpHeaders.set("Authorization", "KakaoAK " + kakaoProperties.getRestapi());
+            RestTemplate rest = new RestTemplate();
+            HttpHeaders httpHeaders = new HttpHeaders();
 
-        HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
+            //헤더 세팅
+            httpHeaders.set("Authorization", "KakaoAK " + kakaoProperties.getRestapi());
 
-        //편의시설 결과를 담을 map 자료 구조를 저장한다.
-        List<JSONObject> results = new ArrayList<>();
+            HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
 
-        while (is_end == "false") {
-            page += 1;
-            params.remove("page");
-            params.add("page", Integer.toString(page));
+            //편의시설 결과를 담을 map 자료 구조를 저장한다.
+            List<JSONObject> results = new ArrayList<>();
 
-            //한번에 페이지 하나만 불러올 수 있음
-            URI targetUrl = UriComponentsBuilder
-                    .fromUriString("https://dapi.kakao.com/v2/local/search/category.json")
-                    .queryParams(params)
-                    .build()
-                    .encode()
-                    .toUri();
-            //post 방식 보내기
-            ResponseEntity<String> res = rest.exchange(targetUrl, HttpMethod.POST, httpEntity, String.class);
+            while (is_end == "false") {
+                page += 1;
+                params.remove("page");
+                params.add("page", Integer.toString(page));
 
-            //String to json 역할을 하는 method
-            JSONParser jsonParser = new JSONParser();
+                //한번에 페이지 하나만 불러올 수 있음
+                URI targetUrl = UriComponentsBuilder
+                        .fromUriString("https://dapi.kakao.com/v2/local/search/category.json")
+                        .queryParams(params)
+                        .build()
+                        .encode()
+                        .toUri();
+                //post 방식 보내기
+                ResponseEntity<String> res = rest.exchange(targetUrl, HttpMethod.POST, httpEntity, String.class);
 
-            //res의 body 부분을 담을 곳
-            JSONObject body = null;
+                //String to json 역할을 하는 method
+                JSONParser jsonParser = new JSONParser();
 
-            //String to json 시도
-            try {
-                body = (JSONObject) jsonParser.parse(res.getBody().toString());
-            } catch (ParseException e) {
-                logger.info("변환 실패");
-                e.printStackTrace();
-            }
-            //마지막 페이지 여부 확인
-            JSONObject meta = (JSONObject) body.get("meta");
+                //res의 body 부분을 담을 곳
+                JSONObject body = null;
 
-            //documents를 열어보면 JsonArray가 추출됨
-            JSONArray docu = (JSONArray) body.get("documents");
-
-            //헤당 페이지가 마지막이 아닐경우
-            if (docu.size() != 0) {
-                for (int i = 0; i < docu.size(); i++) {
-                    JSONObject temp = (JSONObject) docu.get(i);
-                    logger.info("편의점 :: {}", temp);
-                    results.add(temp);
+                //String to json 시도
+                try {
+                    body = (JSONObject) jsonParser.parse(res.getBody().toString());
+                } catch (ParseException e) {
+                    logger.info("변환 실패");
+                    e.printStackTrace();
                 }
+                //마지막 페이지 여부 확인
+                JSONObject meta = (JSONObject) body.get("meta");
+
+                //documents를 열어보면 JsonArray가 추출됨
+                JSONArray docu = (JSONArray) body.get("documents");
+
+                //헤당 페이지가 마지막이 아닐경우
+                if (docu.size() != 0) {
+                    for (int i = 0; i < docu.size(); i++) {
+                        JSONObject temp = (JSONObject) docu.get(i);
+                        logger.info("편의점 :: {}", temp);
+                        results.add(temp);
+                    }
+                }
+                is_end = String.valueOf(meta.get("is_end"));
+                logger.info("is_end :: {}", is_end);
             }
-            is_end = String.valueOf(meta.get("is_end"));
-            logger.info("is_end :: {}", is_end);
+            for (JSONObject result : results) {
+                System.out.println("result.toString() = " + result.toString());
+            }
+
+            RealEstate realEstate = new RealEstate();
+            realEstate.createRealEstate(form.getSigungu(),
+                    Double.parseDouble(form.getLatitude()), Double.parseDouble(form.getLongitude()),
+                    form.getRoadName(), form.getBuildType(),
+                    form.getFloor(), form.getArea(),
+                    form.getDealType(), form.getPrice(),
+                    form.getDeposit(), form.getMonthlyPay(), form.getDescription(),
+                    ""
+            );
+            //JsonObject 합치기
+            Last.addAll(results);
+
+            //매물, 편의 시설 등록 메서드
+            registerWithFacility(results, realEstate, email, params.getFirst("category_group_code"));
         }
-        for (JSONObject result : results) {
-            System.out.println("result.toString() = " + result.toString());
-        }
-
-        RealEstate realEstate = new RealEstate();
-        realEstate.createRealEstate(form.getSigungu(),
-                Double.parseDouble(form.getLatitude()), Double.parseDouble(form.getLongitude()),
-                form.getRoadName(), form.getBuildType(),
-                form.getFloor(), form.getArea(),
-                form.getDealType(), form.getPrice(),
-                form.getDeposit(), form.getMonthlyPay(), form.getDescription(),
-                ""
-        );
-
-        registerWithFacility(results, realEstate, email);
-
-        return results;
+        return Last;
     }
 
 }

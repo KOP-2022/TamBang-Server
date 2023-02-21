@@ -37,7 +37,8 @@ public class RealEstateController {
     //@RequestPart 어노테이션을 활용해 여러 유형의 request body를 한 번에 매핑할 수 있다.
     //매물 등록 요청
     @PostMapping("/real-estates")
-    public List<JSONObject> search(@RequestPart(name = "form", required=true)  Form.RealEstateForm form, @RequestPart(name = "file", required=false) MultipartFile file, @RequestPart String email) {
+    public List<JSONObject> search(@RequestPart(name = "form", required=true)  Form.RealEstateForm form,
+                                   @RequestPart(name = "file", required=false) MultipartFile file, @RequestPart String email) {
         //편의 시설 정보 요청보내기, 가공해서 가져오기
         return realEstateService.getFacilityResponse(realEstateService.getFacilityParams(form), form, email);
     }
