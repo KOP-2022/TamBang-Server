@@ -62,17 +62,8 @@ public class RealEstateServiceImpl implements RealEstateService {
         //회원 정보와 함께 새로운 매물을 등록한다.
         realEstateRepository.save(realEstate, memberEmail);
 
-        FacilityCategory category_name = null;
-
-        if (category_group_code == "CS2"){
-            category_name = FacilityCategory.편의점;
-        }
-        else if(category_group_code == "FD6"){
-            category_name = FacilityCategory.음식점;
-        }
-        else if(category_group_code == "CE7"){
-            category_name = FacilityCategory.카페;
-        }
+        //객체 생성
+        FacilityCategory category = FacilityCategory.편의점;
 
         //리스트로 받아온 편의시설을 새로 등록 (매물과 인접한 거리에 있는 편의시설에 대한 등록)
         for (JSONObject object : facilities) {
@@ -80,7 +71,7 @@ public class RealEstateServiceImpl implements RealEstateService {
 
             //JSONObject 객체의 정보를 Facility entity 객체에 바인딩
             facility.createFacility(Double.parseDouble(String.valueOf(object.get("x"))), Double.parseDouble(String.valueOf(object.get("y"))),
-                    String.valueOf(object.get("address_name")), category_name,
+                    String.valueOf(object.get("address_name")), category.getFacility(category_group_code),
                     String.valueOf(object.get("id")), String.valueOf(object.get("phone")),
                     String.valueOf(object.get("place_name")), String.valueOf(object.get("place_url")),
                     String.valueOf(object.get("road_address_name")));
@@ -121,7 +112,7 @@ public class RealEstateServiceImpl implements RealEstateService {
     @Transactional(readOnly = false)
     @Override
     public List<JSONObject> getFacilityResponse(MultiValueMap<String, String> params, Form.RealEstateForm form, String email) {
-
+            //category_group_code array
             String[] category_code = {"CS2","FD6","CE7"};
 
             //편의시설 결과 전부를 담을 map 자료 구조를 저장한다.
@@ -201,8 +192,10 @@ public class RealEstateServiceImpl implements RealEstateService {
                     form.getDeposit(), form.getMonthlyPay(), form.getDescription(),
                     ""
             );
+            //JsonObject 합치기
             Last.addAll(results);
 
+            //매물, 편의 시설 등록 메서드
             registerWithFacility(results, realEstate, email, params.getFirst("category_group_code"));
         }
         return Last;
