@@ -41,7 +41,7 @@ public class RealEstateController {
         String is_end = "false";
 
         System.out.println("form.toString() = " + form.toString());
-        
+
         int page = 0;
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("y", form.getLatitude()); // y는 위도이다.
@@ -123,6 +123,11 @@ public class RealEstateController {
 
 //        realEstateService.register(realEstate, "kkkdh@kw");
         realEstateService.registerWithFacility(results, realEstate, email);
+    }
+    public List<JSONObject> search(@RequestPart(name = "form", required=true)  Form.RealEstateForm form,
+                                   @RequestPart(name = "file", required=false) MultipartFile file, @RequestPart String email) {
+        //편의 시설 정보 요청보내기, 가공해서 가져오기
+        return realEstateService.getFacilityResponse(realEstateService.getFacilityParams(form), form, email);
     }
 
     @GetMapping("/real-estates/{real-estate-id}")
