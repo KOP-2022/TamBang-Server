@@ -1,6 +1,7 @@
 package com.example.tambang.service;
 
 import com.example.tambang.controller.Form;
+import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.RealEstate;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public interface RealEstateService {
 
     List<JSONObject> getFacilityResponse(MultiValueMap<String, String> params, Form.RealEstateForm form, String email);
 
+    List<Facility> getAroundFacilities(Long realEstateId);
 }
 
 

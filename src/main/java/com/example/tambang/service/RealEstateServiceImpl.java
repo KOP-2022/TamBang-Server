@@ -43,8 +43,8 @@ public class RealEstateServiceImpl implements RealEstateService {
     //매물 등록
     @Override
     @Transactional(readOnly = false)
-    public Long register(RealEstate realEstate, String member_id) {
-        realEstateRepository.save(realEstate, member_id);
+    public Long register(RealEstate realEstate, String memberEmail) {
+        realEstateRepository.save(realEstate, memberEmail);
         return realEstate.getId();
     }
 
@@ -122,6 +122,7 @@ public class RealEstateServiceImpl implements RealEstateService {
         //편의시설 결과를 담을 map 자료 구조를 저장한다.
         List<JSONObject> results = new ArrayList<>();
 
+        //Kakao local API에게 편의 시설 정보를 요청한다.
         while (is_end == "false") {
             page += 1;
             params.remove("page");
@@ -167,9 +168,11 @@ public class RealEstateServiceImpl implements RealEstateService {
             is_end = String.valueOf(meta.get("is_end"));
             logger.info("is_end :: {}", is_end);
         }
-        for (JSONObject result : results) {
-            System.out.println("result.toString() = " + result.toString());
-        }
+
+        //편의시설 조회 목록을 조회
+//        for (JSONObject result : results) {
+//            System.out.println("result.toString() = " + result.toString());
+//        }
 
         RealEstate realEstate = new RealEstate();
         realEstate.createRealEstate(form.getSigungu(),
@@ -186,5 +189,14 @@ public class RealEstateServiceImpl implements RealEstateService {
         return results;
     }
 
+    @Override
+    public List<Facility> getAroundFacilities(Long realEstateId){
+        //id 기반으로 매물 조회한 뒤, 매물 주변의 편의시설을 조회한다.
+        RealEstate realEstate = realEstateRepository.findOne(realEstateId);
+        List<Facility> facilities = realEstateRepository.findAroundFacilities(realEstate);
+
+        //조회 결과를 controller로 반환
+        return facilities;
+    }
 }
 

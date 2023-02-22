@@ -69,7 +69,7 @@ public class RealEstateServiceTest {
         memberRepository.save(member);
         realEstate.setOwner(member);
         realEstateRepository.save(realEstate, member.getEmail());
-        RealEstate findRealEstate = realEstateService.findOne(realEstate.getId());
+        RealEstate findRealEstate = realEstateService.findOneById(realEstate.getId());
 
         //then
         assertThat(findRealEstate).isEqualTo(realEstate);
@@ -93,9 +93,10 @@ public class RealEstateServiceTest {
         memberRepository.save(member);
         realEstate.setOwner(member);
         realEstateRepository.save(realEstate, member.getEmail());
-        RealEstate findRealEstate = realEstateService.findOne(0L); //id는 1부터 시작하기 때문에, 0은 있을 수 없다.
+        RealEstate findRealEstate = realEstateService.findOneById(0L); //id는 1부터 시작하기 때문에, 0은 있을 수 없다.
 
         //then
         assertThat(findRealEstate).isNotEqualTo(member); //하나는 null이더라도, 동등성 판단이 가능한듯
     }
+
 }
