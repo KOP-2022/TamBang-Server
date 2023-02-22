@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RealEstateService {
 
@@ -15,7 +16,7 @@ public interface RealEstateService {
 
     RealEstate findOneById(Long realEstateId);
 
-    void registerWithFacility(List<JSONObject> facilities, RealEstate realEstate, String memberEmail);
+    void registerWithFacility(List<JSONObject> facilities, RealEstate realEstate, String memberEmail, String category_group_code);
 
     MultiValueMap<String, String> getFacilityParams(Form.RealEstateForm form);
 
