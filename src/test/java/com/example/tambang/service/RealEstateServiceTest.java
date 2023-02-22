@@ -98,4 +98,5 @@ public class RealEstateServiceTest {
         //then
         assertThat(findRealEstate).isNotEqualTo(member); //하나는 null이더라도, 동등성 판단이 가능한듯
     }
+
 }

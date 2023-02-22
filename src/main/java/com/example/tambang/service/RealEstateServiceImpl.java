@@ -28,9 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true) //읽기 전용
@@ -45,8 +43,8 @@ public class RealEstateServiceImpl implements RealEstateService {
     //매물 등록
     @Override
     @Transactional(readOnly = false)
-    public Long register(RealEstate realEstate, String member_id) {
-        realEstateRepository.save(realEstate, member_id);
+    public Long register(RealEstate realEstate, String memberEmail) {
+        realEstateRepository.save(realEstate, memberEmail);
         return realEstate.getId();
     }
 
@@ -62,16 +60,13 @@ public class RealEstateServiceImpl implements RealEstateService {
         //회원 정보와 함께 새로운 매물을 등록한다.
         realEstateRepository.save(realEstate, memberEmail);
 
-        //객체 생성
-        FacilityCategory category = FacilityCategory.편의점;
-
         //리스트로 받아온 편의시설을 새로 등록 (매물과 인접한 거리에 있는 편의시설에 대한 등록)
         for (JSONObject object : facilities) {
             Facility facility = new Facility();
 
             //JSONObject 객체의 정보를 Facility entity 객체에 바인딩
             facility.createFacility(Double.parseDouble(String.valueOf(object.get("x"))), Double.parseDouble(String.valueOf(object.get("y"))),
-                    String.valueOf(object.get("address_name")), category.getFacility(category_group_code),
+                    String.valueOf(object.get("address_name")), FacilityCategory.편의점,
                     String.valueOf(object.get("id")), String.valueOf(object.get("phone")),
                     String.valueOf(object.get("place_name")), String.valueOf(object.get("place_url")),
                     String.valueOf(object.get("road_address_name")));
@@ -102,7 +97,7 @@ public class RealEstateServiceImpl implements RealEstateService {
         params.add("y", form.getLatitude()); // y는 위도이다.
         params.add("x", form.getLongitude()); // x는 경도이다.
         params.add("page", "0");
-        //params.add("category_group_code", "CS2");
+        params.add("category_group_code", "CS2");
         params.add("radius", "500"); //근방 500m
         params.add("sort", "distance");
 
@@ -112,11 +107,11 @@ public class RealEstateServiceImpl implements RealEstateService {
     @Transactional(readOnly = false)
     @Override
     public List<JSONObject> getFacilityResponse(MultiValueMap<String, String> params, Form.RealEstateForm form, String email) {
-            //category_group_code array
-            String[] category_code = {"CS2","FD6","CE7"};
+        //category_group_code array
+        String[] category_code = {"CS2","FD6","CE7"};
 
-            //편의시설 결과 전부를 담을 map 자료 구조를 저장한다.
-            List<JSONObject> Last = new ArrayList<>();
+        //편의시설 결과 전부를 담을 map 자료 구조를 저장한다.
+        List<JSONObject> Last = new ArrayList<>();
 
         for (String code : category_code) {
             params.set("category_group_code", code);
@@ -199,6 +194,16 @@ public class RealEstateServiceImpl implements RealEstateService {
             registerWithFacility(results, realEstate, email, params.getFirst("category_group_code"));
         }
         return Last;
+    }
+
+    @Override
+    public List<Facility> getAroundFacilities(Long realEstateId){
+        //id 기반으로 매물 조회한 뒤, 매물 주변의 편의시설을 조회한다.
+        RealEstate realEstate = realEstateRepository.findOne(realEstateId);
+        List<Facility> facilities = realEstateRepository.findAroundFacilities(realEstate);
+
+        //조회 결과를 controller로 반환
+        return facilities;
     }
 
 }

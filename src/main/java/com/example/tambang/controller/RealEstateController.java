@@ -57,4 +57,13 @@ public class RealEstateController {
 
         return new ResponseVO.RealEstateResponse(address, buildInfo, findRealEstate.getDescription(), findRealEstate.getMember().getEmail());
     }
+
+    @GetMapping("/real-estates/{real-estate-id}/facilities")
+    public Map<String, String> getRealEstateFacilityInfo(@PathVariable(name="real-estate-id") Long realEstateId){
+        HashMap<String, String> res = new HashMap<>();
+        System.out.println("realEstateId = " + realEstateId);
+        realEstateService.getAroundFacilities(realEstateId);
+
+        return res;
+    }
 }
