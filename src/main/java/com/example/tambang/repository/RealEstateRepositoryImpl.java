@@ -48,6 +48,11 @@ public class RealEstateRepositoryImpl implements RealEstateRepository{
         return em.find(RealEstate.class, id);
     }
 
+    public List<RealEstate> findAll(){
+        return em.createQuery("select r from RealEstate r")
+                .getResultList();
+    }
+
     @Override
     public List<Facility> findAroundFacilities(RealEstate realEstate){
         String sql = "select ref from RealEstateFacility ref join fetch ref.facility where ref.realEstate.id = :id";

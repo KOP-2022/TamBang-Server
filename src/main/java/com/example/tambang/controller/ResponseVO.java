@@ -77,4 +77,18 @@ public class ResponseVO {
         private boolean success;
         private List<FacilityVO> data;
     }
+    @Getter
+    @AllArgsConstructor
+    public static class RealEstateVO{
+        private Long id;
+        private Double latitude;
+        private Double longitude;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class RealEstateListResponse{
+        private boolean success;
+        private List<RealEstateVO> data;
+    }
 }
