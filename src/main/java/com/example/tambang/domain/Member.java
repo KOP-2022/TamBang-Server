@@ -2,18 +2,16 @@ package com.example.tambang.domain;
 
 import lombok.Getter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "member")
 @Getter
 public class Member {
 
-    @Id
-    private String id;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)//직접 생성한 값을 기본키로 설정한다.
+    private Long id;
+    private String email;
     private String password;
 
     private String name;
@@ -21,7 +19,6 @@ public class Member {
 
     @Column(name = "phone_number")
     private String phoneNumber;
-    private String email;
 
     private String authority;
 
@@ -32,12 +29,11 @@ public class Member {
     private String suspensionYN;
 
     //생성자 메서드로 사용하자.
-    public void createMember(String id, String password, String name, String nickname, String phoneNumber, String email){
-        this.id = id;
+    public void createMember(String email, String password, String name, String nickname, String phoneNumber){
+        this.email = email;
         this.password = password;
         this.name = name;
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
-        this.email = email;
     }
 }
