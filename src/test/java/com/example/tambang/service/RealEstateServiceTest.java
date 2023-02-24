@@ -1,7 +1,9 @@
 package com.example.tambang.service;
 
+import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.Member;
 import com.example.tambang.domain.RealEstate;
+import com.example.tambang.domain.RealEstateFacility;
 import com.example.tambang.repository.MemberRepository;
 import com.example.tambang.repository.RealEstateRepository;
 import org.assertj.core.api.Assertions;
@@ -13,7 +15,10 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.Assert.*;
@@ -29,9 +34,11 @@ public class RealEstateServiceTest {
     RealEstateRepository realEstateRepository;
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    EntityManager em;
 
     @Test
-    @Rollback(false)
+    @Rollback
     public void 매물등록() throws Exception {
         //given
         RealEstate realEstate = new RealEstate();
@@ -43,6 +50,7 @@ public class RealEstateServiceTest {
 
         Member member = new Member();
         member.createMember("test_id@kw.ac.kr", "test_passwd", "kang", "kkkdh", "010-6666-5555");
+        em.persist(member);
 
         //when
         Long savedId = realEstateService.register(realEstate, "test_id@kw.ac.kr");
@@ -99,4 +107,30 @@ public class RealEstateServiceTest {
         assertThat(findRealEstate).isNotEqualTo(member); //하나는 null이더라도, 동등성 판단이 가능한듯
     }
 
+    @Test
+    @Rollback
+    public void 매물_편의시설_조회() throws Exception{
+        //given
+        RealEstate realEstate = new RealEstate();
+        em.persist(realEstate);
+
+        Facility facility = new Facility();
+        em.persist(facility);
+
+        RealEstateFacility rf = new RealEstateFacility();
+        rf.setRealEstate(realEstate);
+        rf.setFacility(facility);
+        em.persist(rf);
+
+        //when
+        em.flush();
+        em.clear();
+
+        List<Facility> facilities = realEstateService.getAroundFacilities(realEstate.getId());
+
+        //then
+        assertThat(facilities.size()).isEqualTo(1);
+        assertThat(facilities.get(0)).isInstanceOf(Facility.class);
+        assertThat(facilities.get(0).getId()).isEqualTo(facility.getId());
+    }
 }
