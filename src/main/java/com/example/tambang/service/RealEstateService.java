@@ -1,6 +1,7 @@
 package com.example.tambang.service;
 
 import com.example.tambang.controller.Form;
+import com.example.tambang.controller.ResponseVO;
 import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.RealEstate;
 import org.json.simple.JSONObject;
@@ -21,6 +22,8 @@ public interface RealEstateService {
     MultiValueMap<String, String> getFacilityParams(Form.RealEstateForm form);
 
     List<JSONObject> getFacilityResponse(MultiValueMap<String, String> params, Form.RealEstateForm form, String email);
+
+    List<ResponseVO.RealEstateVO> getAroundRealEstates(double latitude, double longitude, double radius);
 
     List<Facility> getAroundFacilities(Long realEstateId);
 }
