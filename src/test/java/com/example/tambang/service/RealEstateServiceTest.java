@@ -1,5 +1,6 @@
 package com.example.tambang.service;
 
+import com.example.tambang.controller.ResponseVO;
 import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.Member;
 import com.example.tambang.domain.RealEstate;
@@ -132,5 +133,32 @@ public class RealEstateServiceTest {
         assertThat(facilities.size()).isEqualTo(1);
         assertThat(facilities.get(0)).isInstanceOf(Facility.class);
         assertThat(facilities.get(0).getId()).isEqualTo(facility.getId());
+    }
+
+    @Test
+    @Rollback
+    public void 기준좌표_500m내의_매물조회() throws Exception{
+        //given
+        RealEstate realEstate = new RealEstate();
+        //비마관
+        double des_latitude = 37.61963159909614;
+        double des_longitude = 127.05985783472804;
+        //광운대 정문
+        double kw_latitude = 37.61905576090399;
+        double kw_longitude = 127.0582715974131;
+
+        double radius = 500;
+
+        realEstate.createRealEstate("서울시 노원구", kw_latitude, kw_longitude, "광운로 15길 14",
+                "빌라", 3L, 4.1, "전세",0L,1000000000L,0L,
+                "집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
+        em.persist(realEstate);
+
+        //when
+        List<ResponseVO.RealEstateVO> aroundRealEstates = realEstateService.getAroundRealEstates(des_latitude, des_longitude, radius);
+
+        //then
+        System.out.println("aroundRealEstates.size() = " + aroundRealEstates.size());
+        assertThat(aroundRealEstates.size()).isNotEqualTo(0);
     }
 }
