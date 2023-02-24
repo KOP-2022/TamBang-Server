@@ -2,6 +2,7 @@ package com.example.tambang.service;
 
 import com.example.tambang.configuration.properties.KakaoProperties;
 import com.example.tambang.controller.Form;
+import com.example.tambang.controller.ResponseVO;
 import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.FacilityCategory;
 import com.example.tambang.domain.RealEstate;
@@ -14,6 +15,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.DuplicateFormatFlagsException;
 import java.util.List;
 
 @Service
@@ -43,7 +46,11 @@ public class RealEstateServiceImpl implements RealEstateService {
     //매물 등록
     @Override
     @Transactional(readOnly = false)
-    public Long register(RealEstate realEstate, String memberEmail) {
+    public Long register(RealEstate realEstate, String memberEmail){
+        if(!validateDuplicateSite(realEstate.getLatitude(), realEstate.getLongitude())){
+            // 등록에 error throw
+            throw new IllegalStateException();
+        }
         realEstateRepository.save(realEstate, memberEmail);
         return realEstate.getId();
     }
@@ -57,10 +64,15 @@ public class RealEstateServiceImpl implements RealEstateService {
     @Transactional(readOnly = false)
     @Override
     public void registerWithFacility(List<JSONObject> facilities, RealEstate realEstate, String memberEmail, String category_group_code) {
-        //회원 정보와 함께 새로운 매물을 등록한다.
+        // 중복 좌표 검사
+        if(!validateDuplicateSite(realEstate.getLatitude(), realEstate.getLongitude())){
+            // 등록에 error throw
+            throw new IllegalStateException();
+        }
+        // 회원 정보와 함께 새로운 매물을 등록한다.
         realEstateRepository.save(realEstate, memberEmail);
 
-        //리스트로 받아온 편의시설을 새로 등록 (매물과 인접한 거리에 있는 편의시설에 대한 등록)
+        // 리스트로 받아온 편의시설을 새로 등록 (매물과 인접한 거리에 있는 편의시설에 대한 등록)
         for (JSONObject object : facilities) {
             Facility facility = new Facility();
 
@@ -89,7 +101,7 @@ public class RealEstateServiceImpl implements RealEstateService {
         }
     }
 
-    @Transactional(readOnly = false)
+
     @Override
     public MultiValueMap<String, String> getFacilityParams(Form.RealEstateForm form) {
 
@@ -206,5 +218,55 @@ public class RealEstateServiceImpl implements RealEstateService {
         return facilities;
     }
 
+    public List<ResponseVO.RealEstateVO> getAroundRealEstates(double latitude, double longitude, double radius){
+        List<RealEstate> realEstates = realEstateRepository.findAll();
+        List<ResponseVO.RealEstateVO> inRangeRealEstates = new ArrayList<>();
+
+        for (RealEstate realEstate : realEstates) {
+            double distance = getDistance(latitude, longitude, realEstate.getLatitude(), realEstate.getLongitude());
+//            System.out.println("realEstate.getLatitude() = " + realEstate.getLatitude() + " longitude: " + realEstate.getLongitude());
+//            System.out.println("distance = " + distance + ", " + radius);
+            // radius 범위 이내의 매물을 리스트에 추가한다.
+            if(distance <= radius){
+                ResponseVO.RealEstateVO realEstateVO = new ResponseVO.RealEstateVO(realEstate.getId(), realEstate.getLatitude(), realEstate.getLongitude());
+                inRangeRealEstates.add(realEstateVO);
+            }
+        }
+
+        return inRangeRealEstates;
+    }
+
+    private double getDistance(double aLat, double aLon, double bLat, double bLon){
+        int radius = 6371; //지구의 반지름
+
+        double dLat = rad(bLat - aLat);
+        double dLon = rad(bLon - aLon);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(aLon) * Math.cos(bLon);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double dDistance = radius * c;
+
+        //미터 단위로 변환
+        dDistance *= 1000;
+        return dDistance;
+    }
+
+    private double rad(double x){
+        return x * 3.14159 / 180.0;
+    }
+
+    private boolean validateDuplicateSite(double latitude, double longitude){
+        List<RealEstate> realEstates = realEstateRepository.findAll();
+
+        for(RealEstate realEstate : realEstates){
+            // 일단 같은 위도와 경도의 매물 중복 등록 불가능하도록 설정
+            if(realEstate.getLatitude() == latitude && realEstate.getLongitude() == longitude){
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
 

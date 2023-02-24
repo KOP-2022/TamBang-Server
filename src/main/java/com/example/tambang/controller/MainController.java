@@ -1,13 +1,16 @@
 package com.example.tambang.controller;
 
 import com.example.tambang.domain.Member;
+import com.example.tambang.domain.RealEstate;
 import com.example.tambang.service.MemberService;
+import com.example.tambang.service.RealEstateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,7 +19,7 @@ import java.util.Optional;
 public class MainController {
 
     private final MemberService memberService;
-
+    private final RealEstateService realEstateService;
     //로그인 서비스
     @PostMapping("/login") //json을 반환하는 post request handler
     public Map<String, Object> login(HttpServletRequest request, @RequestBody Form.LoginForm form){
@@ -102,6 +105,19 @@ public class MainController {
         }
         //회원 조회에 실패한 경우 실패 여부만 반환
         responseBody = new ResponseVO.MemberResponse(false);
+
+        return responseBody;
+    }
+
+    @GetMapping("/map")
+    public ResponseVO.RealEstateListResponse getRealEstateListInRadius(
+            @RequestParam(required = true) Double latitude,
+            @RequestParam(required = true) Double longitude,
+            @RequestParam(required = true) Double radius){
+        // 기준 좌표 중심으로 radius 거리 내의 모든 매물을 조회
+        List<ResponseVO.RealEstateVO> aroundRealEstates = realEstateService.getAroundRealEstates(latitude, longitude, radius);
+        // response body를 만든다.
+        ResponseVO.RealEstateListResponse responseBody = new ResponseVO.RealEstateListResponse(true, aroundRealEstates);
 
         return responseBody;
     }
