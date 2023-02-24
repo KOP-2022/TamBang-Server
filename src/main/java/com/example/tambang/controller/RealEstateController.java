@@ -1,9 +1,11 @@
 package com.example.tambang.controller;
 
 import com.example.tambang.configuration.properties.KakaoProperties;
+import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.RealEstate;
 import com.example.tambang.service.RealEstateServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -59,10 +61,27 @@ public class RealEstateController {
     }
 
     @GetMapping("/real-estates/{real-estate-id}/facilities")
-    public Map<String, String> getRealEstateFacilityInfo(@PathVariable(name="real-estate-id") Long realEstateId){
-        HashMap<String, String> res = new HashMap<>();
+    public ResponseVO.FacilityResponse getRealEstateFacilityInfo(@PathVariable(name="real-estate-id") Long realEstateId){
+        List<ResponseVO.FacilityVO> facilityVoList = new ArrayList<>();
         System.out.println("realEstateId = " + realEstateId);
-        realEstateService.getAroundFacilities(realEstateId);
+        List<Facility> facilities = realEstateService.getAroundFacilities(realEstateId);
+
+        for (Facility facility : facilities) {
+            ResponseVO.FacilityVO facilityVO = new ResponseVO.FacilityVO(
+                    facility.getId(),
+                    facility.getLongitude(),
+                    facility.getLatitude(),
+                    facility.getAddressName(),
+                    facility.getCategoryGroupName(),
+                    facility.getKakaoId(),
+                    facility.getPhone(),
+                    facility.getPlaceName(),
+                    facility.getPlaceUrl(),
+                    facility.getRoadAddressName()
+                    );
+            facilityVoList.add(facilityVO);
+        }
+        ResponseVO.FacilityResponse res = new ResponseVO.FacilityResponse(true, facilityVoList);
 
         return res;
     }

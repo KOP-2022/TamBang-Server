@@ -50,18 +50,24 @@ public class RealEstateRepositoryImpl implements RealEstateRepository{
 
     @Override
     public List<Facility> findAroundFacilities(RealEstate realEstate){
+        String sql = "select ref from RealEstateFacility ref join fetch ref.facility where ref.realEstate.id = :id";
         //realEstate를 이용해 RealEstateFacility entity list 찾은 다음, 객체 그래프 탐색을 이용해 편의시설 List collection을 만들면 된다.
-        List<RealEstateFacility> realEstateFacilities = em.createQuery("select re from RealEstate re where re.realEstateId = :id", RealEstateFacility.class)
+        List<RealEstateFacility> realEstateFacilities = em.createQuery(sql, RealEstateFacility.class)
                 .setParameter("id", realEstate.getId())
                 .getResultList();
         
         List<Facility> facilities = new ArrayList<>();
 
+        for (RealEstateFacility realEstateFacility : realEstateFacilities) {
+            System.out.println("realEstateFacility.getFacility() = " + realEstateFacility.getFacility());
+        }
+
         //RealEstateFacility entity를 이용해 Facility entity를 조회한다.
         for (RealEstateFacility realEstateFacility : realEstateFacilities) {
             facilities.add(realEstateFacility.getFacility());
         }
-        
+        System.out.println("facilities.size() = " + facilities.size());
+
         //편의 시설 리스트 컬랙션을 반환
         return facilities;
     }
