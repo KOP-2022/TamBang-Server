@@ -62,30 +62,30 @@ public class MainController {
     //회원 서비스
     @ResponseBody
     @PostMapping("/members")
-    public Map<String, Object> createMember(@RequestBody Form.MemberForm form){
-        System.out.println("param: " + form.getEmail() + " " + form.getPassword());
-
+    public ResponseVO.LoginResponse createMember(@RequestBody Form.MemberForm form){
+        ResponseVO.LoginResponse responseBody = new ResponseVO.LoginResponse();
+//        System.out.println("param: " + form.getEmail() + " " + form.getPassword());
         Member member = new Member();
         member.createMember(form.getEmail(), form.getPassword(), form.getName(), form.getNickname(), form.getPhoneNumber());
-
-        //반환할 정보를 hashmap으로 생성 {"success" : "true"}
-        Map<String, Object> returnData = new HashMap<>();
 
         try{
             //중복된 아이디로 가입하는 경우 IllegalStateException 발생
             String memberId = memberService.join(member);
         }
         catch(IllegalStateException e){
+            //Exception 발생 시에는 로그인 실패 결과를 전달
             String msg = "회원 가입에 실패했습니다.";
-            returnData.put("success", false);
-            returnData.put("message", msg);
 
-            return returnData;
+            responseBody.setSuccess(false);
+            responseBody.getData().put("message", msg);
+
+            return responseBody;
         }
-        //성공한 경우 "success" : "true" 반환하도록 한다.
-        returnData.put("success", true);
+        //성공한 경우 멤버 이메일 정보와 함께 로그인 성공을 알린다.
+        responseBody.setSuccess(true);
+        responseBody.getData().put("email", member.getEmail());
 
-        return returnData;
+        return responseBody;
     }
 
     //회원 정보 조회

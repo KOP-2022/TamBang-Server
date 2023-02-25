@@ -2,10 +2,7 @@ package com.example.tambang.controller;
 
 import com.example.tambang.domain.FacilityCategory;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -33,6 +30,15 @@ public class ResponseVO {
             this.description = description;
             this.memberEmail = memberEmail;
         }
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LoginResponse{
+        private Boolean success;
+        private HashMap<String, String> data = new HashMap<>();
     }
 
     @Getter
