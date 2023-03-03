@@ -63,9 +63,9 @@ public class RealEstateRepositoryImpl implements RealEstateRepository{
         
         List<Facility> facilities = new ArrayList<>();
 
-        for (RealEstateFacility realEstateFacility : realEstateFacilities) {
-            System.out.println("realEstateFacility.getFacility() = " + realEstateFacility.getFacility());
-        }
+//        for (RealEstateFacility realEstateFacility : realEstateFacilities) {
+//            System.out.println("realEstateFacility.getFacility() = " + realEstateFacility.getFacility());
+//        }
 
         //RealEstateFacility entity를 이용해 Facility entity를 조회한다.
         for (RealEstateFacility realEstateFacility : realEstateFacilities) {

@@ -7,7 +7,9 @@ import com.example.tambang.service.RealEstateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
@@ -22,17 +24,18 @@ public class MainController {
     private final RealEstateService realEstateService;
     //로그인 서비스
     @PostMapping("/login") //json을 반환하는 post request handler
-    public Map<String, Object> login(HttpServletRequest request, @RequestBody Form.LoginForm form){
-        Optional<Member> member = memberService.login(form.getEmail(), form.getPassword());
+    public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response, @RequestBody Form.LoginForm form){
+        String jwtCreatedByLogin = memberService.login(form.getEmail(), form.getPassword());
         Map<String, Object> responseBody = new HashMap<>();
 
-        //로그인 요청을 보낸 고객 정보로 entity가 있는 경우
-        if(member.isPresent()){
-            //session이 없다면 생성, 있으면 session 반환
-            HttpSession session = request.getSession();
-            //session에 속성 setting
-            session.setAttribute("loginMember", member.get());
+        // cookie로 jwt를 담아 전송한다.
+//        System.out.println("jwtCreatedByLogin = " + jwtCreatedByLogin);
+        Cookie jwt = new Cookie("jwt", jwtCreatedByLogin);
+        jwt.setHttpOnly(false); // browser에서 cookie로의 접근을 허용
+        response.addCookie(jwt);
 
+        //로그인 요청을 보낸 고객 정보로 jwt 생성에 성공한 경우
+        if(jwtCreatedByLogin != ""){
             //로그인의 성공 여부를 작성해서 반환한다.
             responseBody.put("success", true);
         }
@@ -45,16 +48,10 @@ public class MainController {
     }
     @ResponseBody
     @PostMapping("/logout")
-    public Map<String, Object> login(HttpServletRequest request){
-        //session 있는지 확인
-        HttpSession session = request.getSession(false);
+    public Map<String, Object> logout(HttpServletRequest request){
         Map<String, Object> responseBody = new HashMap<>();
-
-        if(session != null){
-            session.invalidate(); //session 무효화
-            responseBody.put("success", true);
-            return responseBody;
-        }
+        // refresh token 구현이 없다면, 로그아웃이 의미가 없다.
+        // token 유효 기간을 1시간으로 잡아서 짧게 쓰는 방식을 선택한다. 일단
         responseBody.put("success", false);
         return responseBody;
     }
@@ -67,7 +64,10 @@ public class MainController {
 //        System.out.println("param: " + form.getEmail() + " " + form.getPassword());
         Member member = new Member();
         member.createMember(form.getEmail(), form.getPassword(), form.getName(), form.getNickname(), form.getPhoneNumber());
-
+        // 일단 기본적으로 USER 권한 부여
+        member.grantAuthority("USER");
+        
+        System.out.println("member = " + member);
         try{
             //중복된 아이디로 가입하는 경우 IllegalStateException 발생
             String memberId = memberService.join(member);

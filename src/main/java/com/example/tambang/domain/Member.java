@@ -36,4 +36,12 @@ public class Member {
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
     }
+    public void grantAuthority(String authority){
+        this.authority = authority;
+    }
+
+    // 비밀번호 암호화한 형태로 변경
+    public void setEncodedPasswd(String encodedPasswd){
+        this.password = encodedPasswd;
+    }
 }
