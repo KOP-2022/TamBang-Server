@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,8 @@ public class MemberServiceTest {
 
     @Autowired
     MemberServiceImpl memberService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("회원등록")
@@ -56,14 +59,19 @@ public class MemberServiceTest {
     public void 로그인() throws Exception{
         //given
         Member member = new Member();
-        member.createMember("test_id@kw.ac.kr", "test_passwd", "kang", "kkkdh", "010-6666-5555");
+        String testPassword = "test_passwd";
+        String encodedPassword = passwordEncoder.encode(testPassword);
+        member.createMember("test_id@kw.ac.kr", testPassword, "kang", "kkkdh", "010-6666-5555");
+        member.grantAuthority("USER");
+//        memberService.join(member);
         memberService.join(member);
-
         //when
-        Optional<Member> findMember = memberService.login("test_id@kw.ac.kr", "test_passwd");
-        Member member1 = findMember.get();
+        String jwt = memberService.login("test_id@kw.ac.kr", testPassword);
+
         //then
-        assertThat(member1).isInstanceOf(Member.class);
+        boolean isMatch = passwordEncoder.matches(testPassword, encodedPassword);
+        assertThat(isMatch).isEqualTo(true);
+        assertThat(jwt).isNotEqualTo("");
     }
 
     @Test
@@ -71,13 +79,16 @@ public class MemberServiceTest {
     public void 로그인_실패() {
         //given
         Member member = new Member();
-        member.createMember("test_id@kw.ac.kr", "test_passwd", "kang", "kkkdh", "010-6666-5555");
+        String testPassword = "test_passwd";
+        String encodedPassword = passwordEncoder.encode(testPassword);
+
+        member.createMember("test_id@kw.ac.kr", encodedPassword, "kang", "kkkdh", "010-6666-5555");
         memberService.join(member);
 
         //when
-        Optional<Member> loginMember = memberService.login("test_id@kw.ac.kr", "test");
+        String jwt = memberService.login("test_id@kw.ac.kr", "test");
 
         //then
-        assertThat(loginMember).isEqualTo(Optional.empty());
+        assertThat(jwt).isEqualTo(""); // 로그인 실패한 경우 빈 토큰이 발급된다.
     }
 }

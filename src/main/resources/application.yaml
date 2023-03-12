@@ -22,3 +22,6 @@ logging:
         type:
           descriptor:
             sql: trace
+
+jwt:
+  password: hello.world.tambang # secret key로 사용될 예정
