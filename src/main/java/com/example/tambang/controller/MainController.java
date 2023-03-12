@@ -31,6 +31,7 @@ public class MainController {
         // cookie로 jwt를 담아 전송한다.
 //        System.out.println("jwtCreatedByLogin = " + jwtCreatedByLogin);
         Cookie jwt = new Cookie("jwt", jwtCreatedByLogin);
+        jwt.setPath("/");       // 모든 path에서의 쿠키에 대한 접근을 허용한다.
         jwt.setHttpOnly(false); // browser에서 cookie로의 접근을 허용
         response.addCookie(jwt);
 
