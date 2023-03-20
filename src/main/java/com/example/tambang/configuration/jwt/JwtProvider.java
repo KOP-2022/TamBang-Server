@@ -1,7 +1,6 @@
 package com.example.tambang.configuration.jwt;
 
 import com.example.tambang.configuration.security.UserDetailsImpl;
-import com.example.tambang.configuration.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ import java.util.Date;
 public class JwtProvider {
     @Value("${jwt.password}")
     private String secretKey;
-    private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     public String createToken(UserDetailsImpl userDetails, Long expiredMs){
         Date now = new Date();
@@ -48,12 +48,14 @@ public class JwtProvider {
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .setSubject(userDetails.getUsername())
-                .signWith(SignatureAlgorithm.HS256, Base64.getEncoder().encode(secretKey.getBytes()))
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
     }
     // jwt 보유자의 권한 추출
     public Authentication getAuthentication(String token){
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserEmail(token));
+        String userEmail = this.getUserEmail(token);
+        System.out.println("userEmail = " + userEmail);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
         // UsernamePasswordAuthenticaionToken 만들어 반환
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
@@ -73,7 +75,7 @@ public class JwtProvider {
     }
     public boolean isExpired(String token){
         Claims claims = Jwts.parser()
-                .setSigningKey(Base64.getEncoder().encodeToString(secretKey.getBytes()))
+                .setSigningKey(secretKey.getBytes())
                 .parseClaimsJws(token)
                 .getBody();
         Date expiration = claims.getExpiration();

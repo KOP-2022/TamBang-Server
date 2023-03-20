@@ -32,12 +32,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // "Bearer " removing
         String token = jwtProvider.BearerRemove(authorization);
+        System.out.println("token = " + token);
         boolean isExpired = jwtProvider.isExpired(token);
         if(isExpired){
             logger.error("token is expired");
             filterChain.doFilter(request, response);
         }
         String username = jwtProvider.getUserEmail(token);
+        System.out.println("username = " + username);
         Authentication authentication = jwtProvider.getAuthentication(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
