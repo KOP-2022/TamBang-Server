@@ -23,5 +23,12 @@ logging:
           descriptor:
             sql: trace
 
+server:
+  port: 443
+  ssl:
+  key-store: classpath:ssl/keystore.p12
+  key-store-type: PKCS12
+  key-store-password: 1234
+
 jwt:
   password: hello_world_tambang # secret key로 사용될 예정
