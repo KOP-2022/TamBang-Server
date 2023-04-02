@@ -65,10 +65,10 @@ public class RealEstateServiceImpl implements RealEstateService {
     @Override
     public void registerWithFacility(List<JSONObject> facilities, RealEstate realEstate, String memberEmail, String category_group_code) {
         // 중복 좌표 검사
-        if(!validateDuplicateSite(realEstate.getLatitude(), realEstate.getLongitude())){
-            // 등록에 error throw
-            throw new IllegalStateException();
-        }
+//        if(!validateDuplicateSite(realEstate.getLatitude(), realEstate.getLongitude())){
+//            // 등록에 error throw
+//            throw new IllegalStateException();
+//        }
         // 회원 정보와 함께 새로운 매물을 등록한다.
         realEstateRepository.save(realEstate, memberEmail);
 
@@ -82,7 +82,7 @@ public class RealEstateServiceImpl implements RealEstateService {
                     String.valueOf(object.get("id")), String.valueOf(object.get("phone")),
                     String.valueOf(object.get("place_name")), String.valueOf(object.get("place_url")),
                     String.valueOf(object.get("road_address_name")));
-            System.out.println("facility.toString() = " + facility.toString());
+//            System.out.println("facility.toString() = " + facility.toString());
 
             /*
             중복되는 편의시설은 추가하면 안됨
@@ -262,6 +262,10 @@ public class RealEstateServiceImpl implements RealEstateService {
         for(RealEstate realEstate : realEstates){
             // 일단 같은 위도와 경도의 매물 중복 등록 불가능하도록 설정
             if(realEstate.getLatitude() == latitude && realEstate.getLongitude() == longitude){
+                System.out.println("realEstate.getLatitude() = " + realEstate.getLatitude());
+                System.out.println("latitude = " + latitude);
+                System.out.println("realEstate.getLongitude() = " + realEstate.getLongitude());
+                System.out.println("latitude = " + longitude);
                 return false;
             }
         }
