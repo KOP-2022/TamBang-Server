@@ -57,8 +57,8 @@ public class MemberServiceImpl implements MemberService {
         System.out.println("login service email = " + email);
         //비밀번호까지 service component에서 비교해서 일치하는 경우 Optional 객체를 반환한다.
         String encodedPassword = findMember.get().getPassword();
-        System.out.println("password = " + password);
-        System.out.println("encodedPassword = " + encodedPassword);
+//        System.out.println("password = " + password);
+//        System.out.println("encodedPassword = " + encodedPassword);
         boolean isMatch = passwordEncoder.matches(password, encodedPassword);
 
         if(!isMatch){
@@ -71,7 +71,7 @@ public class MemberServiceImpl implements MemberService {
         );
 
         String jwt = createJwt(authentication);
-        System.out.println("newly created jwt with login = " + jwt);
+//        System.out.println("newly created jwt with login = " + jwt);
         return jwt;
     }
 
