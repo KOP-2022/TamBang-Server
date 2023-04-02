@@ -134,7 +134,7 @@ public class MainController {
                 .httpOnly(false)
                 .secure(true)
                 .maxAge(maxAge)
-                .domain("tambang.kro.kr")
+                .domain(".tambang.kro.kr")
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
     }
