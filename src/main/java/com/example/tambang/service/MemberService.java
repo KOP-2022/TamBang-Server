@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface MemberService {
     String join(Member member);
-    Optional<Member> login(String email, String passwd);
+    String login(String email, String passwd);
     Optional<Member> findByEmail(String email);
 }
