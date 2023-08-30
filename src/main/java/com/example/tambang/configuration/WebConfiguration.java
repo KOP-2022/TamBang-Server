@@ -11,6 +11,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*");
+                .allowedOrigins("https://tambang.kro.kr", "https://tambang-dev.kro.kr", "https://localhost:4173")
+                .allowCredentials(true); // cookie 요청을 허용
     }
 }

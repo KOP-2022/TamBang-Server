@@ -5,6 +5,7 @@ import com.example.tambang.domain.RealEstate;
 import com.example.tambang.service.MemberService;
 import com.example.tambang.service.RealEstateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -30,9 +31,13 @@ public class MainController {
 
         // cookie로 jwt를 담아 전송한다.
 //        System.out.println("jwtCreatedByLogin = " + jwtCreatedByLogin);
-        Cookie jwt = new Cookie("jwt", jwtCreatedByLogin);
-        jwt.setHttpOnly(false); // browser에서 cookie로의 접근을 허용
-        response.addCookie(jwt);
+//        Cookie jwt = new Cookie("jwt", jwtCreatedByLogin);
+//        jwt.setPath("/");       // 모든 path에서의 쿠키에 대한 접근을 허용한다.
+//        jwt.setHttpOnly(false); // browser에서 cookie로의 접근을 허용
+//
+//        response.addCookie(jwt);
+
+        addCookie(response, "jwt", jwtCreatedByLogin, 3600);
 
         //로그인 요청을 보낸 고객 정보로 jwt 생성에 성공한 경우
         if(jwtCreatedByLogin != ""){
@@ -120,5 +125,17 @@ public class MainController {
         ResponseVO.RealEstateListResponse responseBody = new ResponseVO.RealEstateListResponse(true, aroundRealEstates);
 
         return responseBody;
+    }
+
+    private void addCookie(HttpServletResponse response, String name, String value, int maxAge){
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(false)
+                .secure(true)
+                .maxAge(maxAge)
+                .domain(".tambang.kro.kr")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 }
