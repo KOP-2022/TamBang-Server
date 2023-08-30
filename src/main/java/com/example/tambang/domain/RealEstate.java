@@ -14,9 +14,11 @@ public class RealEstate {
     private Double latitude;
     private Double longitude;
 
+    // real_estate : member → N:1
+    //외래키를 테이블 상에 무슨 이름으로 표기할까?
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member; // member 1 : N real estate
+    private Member member;
 
     //위치 정보
     private String sigungu;

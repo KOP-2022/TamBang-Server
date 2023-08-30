@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Getter
 public class Facility {
 
+    //id값을 null로 하면 db가 알아서 auto_increment 해줌
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

@@ -11,9 +11,6 @@ import java.util.Map;
 @Getter @Setter
 public class ResponseVO {
 
-    private Map<String, Object> data = new HashMap<>();
-    private boolean success;
-
     //불변 객체로 만들기 위해 생성자로만 초기화한다.
     @Getter
     public static class RealEstateResponse{
