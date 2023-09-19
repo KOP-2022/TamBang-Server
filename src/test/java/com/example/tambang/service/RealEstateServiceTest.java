@@ -38,6 +38,23 @@ public class RealEstateServiceTest {
     @Autowired
     EntityManager em;
 
+    private static String TEST_SIGUNGU = "서울시 노원구";
+    private static String TEST_ROAD_NAME = "광운로 15길 14";
+    private static String TEST_BUILD_TYPE = "빌라";
+    private static Long TEST_FLOOR = 3L;
+    private static Double TEST_AREA = 4.1;
+    private static String TEST_DEAL_TYPE = "전세";
+    private static Long TEST_PRICE = 0L;
+    private static Long TEST_DEPOSIT = 1000000000L;
+    private static Long TEST_MONTHLY_PAY = 0L;
+    private static String TEST_DESCRIPTION = "집이 죠습니다.";
+    private static String TEST_IMAGE = "/C:/Users/actgo/Pictures/투게더.jpg";
+    private static String TEST_EMAIL = "test_email";
+    private static String TEST_PASSWORD = "test_passwd";
+    private static String TEST_NAME = "kang";
+    private static String TEST_NICKNAME = "kkkdh";
+    private static String TEST_PHONE_NUMBER = "010-0000-1111";
+
     @Test
     @Rollback
     public void 매물등록() throws Exception {
@@ -45,16 +62,16 @@ public class RealEstateServiceTest {
         RealEstate realEstate = new RealEstate();
         double kw_latitude = 37.61905576090399;
         double kw_longitude = 127.0582715974131;
-        realEstate.createRealEstate("서울시 노원구", kw_latitude, kw_longitude, "광운로 15길 14",
-                "빌라", 3L, 4.1, "전세",0L,1000000000L,0L,
-                "집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
+        realEstate.createRealEstate(TEST_SIGUNGU, kw_latitude, kw_longitude, TEST_ROAD_NAME,
+                TEST_BUILD_TYPE, TEST_FLOOR, TEST_AREA, TEST_DEAL_TYPE,TEST_PRICE,TEST_DEPOSIT,TEST_MONTHLY_PAY,
+                TEST_DESCRIPTION, TEST_IMAGE);
 
         Member member = new Member();
-        member.createMember("test_id@kw.ac.kr", "test_passwd", "kang", "kkkdh", "010-6666-5555");
-        em.persist(member);
+        member.createMember(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
+        memberRepository.save(member);
 
         //when
-        Long savedId = realEstateService.register(realEstate, "test_id@kw.ac.kr");
+        Long savedId = realEstateService.register(realEstate, TEST_EMAIL);
 
         //then
         assertEquals(realEstate, realEstateRepository.findOne(savedId));
@@ -67,12 +84,12 @@ public class RealEstateServiceTest {
         RealEstate realEstate = new RealEstate();
         double test_latitude = 37.61905576090399;
         double test_longitude = 127.0582715974131;
-        realEstate.createRealEstate("서울시 노원구", test_latitude, test_longitude, "광운로 15길 14",
-                "빌라", 3L, 4.1, "전세",0L,1000000000L,0L,
-                "집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
+        realEstate.createRealEstate(TEST_SIGUNGU, test_latitude, test_longitude, TEST_ROAD_NAME,
+                TEST_BUILD_TYPE, TEST_FLOOR, TEST_AREA, TEST_DEAL_TYPE,TEST_PRICE,TEST_DEPOSIT,TEST_MONTHLY_PAY,
+                TEST_DESCRIPTION, TEST_IMAGE);
 
         Member member = new Member();
-        member.createMember("test_id@kw.ac.kr", "test_passwd", "kang", "kkkdh", "010-6666-5555");
+        member.createMember(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
 
         //when
         memberRepository.save(member);
@@ -91,12 +108,12 @@ public class RealEstateServiceTest {
         RealEstate realEstate = new RealEstate();
         double test_latitude = 37.61905576090399;
         double test_longitude = 127.0582715974131;
-        realEstate.createRealEstate("서울시 노원구", test_latitude, test_longitude, "광운로 15길 14",
-                "빌라", 3L, 4.1, "전세",0L,1000000000L,0L,
-                "집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
+        realEstate.createRealEstate(TEST_SIGUNGU, test_latitude, test_longitude, TEST_ROAD_NAME,
+                TEST_BUILD_TYPE, TEST_FLOOR, TEST_AREA, TEST_DEAL_TYPE,TEST_PRICE,TEST_DEPOSIT,TEST_MONTHLY_PAY,
+                TEST_DESCRIPTION, TEST_IMAGE);
 
         Member member = new Member();
-        member.createMember("test_id@kw.ac.kr", "test_passwd", "kang", "kkkdh", "010-6666-5555");
+        member.createMember(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
 
         //when
         memberRepository.save(member);
@@ -149,16 +166,16 @@ public class RealEstateServiceTest {
 
         double radius = 500;
 
-        realEstate.createRealEstate("서울시 노원구", kw_latitude, kw_longitude, "광운로 15길 14",
-                "빌라", 3L, 4.1, "전세",0L,1000000000L,0L,
-                "집이 죠습니다","/C:/Users/actgo/Pictures/투게더.jpg");
+        realEstate.createRealEstate(TEST_SIGUNGU, kw_latitude, kw_longitude, TEST_ROAD_NAME,
+                TEST_BUILD_TYPE, TEST_FLOOR, TEST_AREA, TEST_DEAL_TYPE,TEST_PRICE,TEST_DEPOSIT,TEST_MONTHLY_PAY,
+                TEST_DESCRIPTION, TEST_IMAGE);
+
         em.persist(realEstate);
 
         //when
         List<ResponseVO.RealEstateVO> aroundRealEstates = realEstateService.getAroundRealEstates(des_latitude, des_longitude, radius);
 
         //then
-        System.out.println("aroundRealEstates.size() = " + aroundRealEstates.size());
         assertThat(aroundRealEstates.size()).isNotEqualTo(0);
     }
 }
