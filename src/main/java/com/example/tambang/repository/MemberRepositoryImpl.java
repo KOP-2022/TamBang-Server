@@ -28,7 +28,7 @@ public class MemberRepositoryImpl implements MemberRepository{
         List<Member> members = em.createQuery("select m from Member m where m.email = :email", Member.class)
                 .setParameter("email", email)
                 .getResultList();
-        System.out.println("members.size() = " + members.size());
+
         return members.stream().findAny();
     }
 
