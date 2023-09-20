@@ -1,34 +1,22 @@
 package com.example.tambang.controller;
 
-import com.example.tambang.configuration.properties.KakaoProperties;
 import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.RealEstate;
 import com.example.tambang.service.RealEstateServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+@Tag(name = "main api", description = "main")
 @RestController
 @RequiredArgsConstructor
 public class RealEstateController {
@@ -36,9 +24,16 @@ public class RealEstateController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final RealEstateServiceImpl realEstateService;
 
+    @GetMapping("/test")
+    @Operation(summary = "test", description = "test")
+    public String test(){
+        return "test";
+    }
+
     //@RequestPart 어노테이션을 활용해 여러 유형의 request body를 한 번에 매핑할 수 있다.
     //매물 등록 요청
     @PostMapping("/real-estates")
+    @Operation(summary = "search", description = "편의시설 정보 검색")
     public List<JSONObject> search(@RequestPart(name = "form", required=true)  Form.RealEstateForm form,
                                    @RequestPart(name = "file", required=false) MultipartFile file, @RequestPart String email) {
         //편의 시설 정보 요청보내기, 가공해서 가져오기

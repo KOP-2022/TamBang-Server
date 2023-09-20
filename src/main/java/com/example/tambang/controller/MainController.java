@@ -1,29 +1,27 @@
 package com.example.tambang.controller;
 
 import com.example.tambang.domain.Member;
-import com.example.tambang.domain.RealEstate;
 import com.example.tambang.service.MemberService;
 import com.example.tambang.service.RealEstateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@RestController
 @RequiredArgsConstructor
+//@RequestMapping("/api/v1")
+@RestController
 public class MainController {
 
     private final MemberService memberService;
     private final RealEstateService realEstateService;
-    //로그인 서비스
+
     @PostMapping("/login") //json을 반환하는 post request handler
     public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response, @RequestBody Form.LoginForm form){
         String jwtCreatedByLogin = memberService.login(form.getEmail(), form.getPassword());
