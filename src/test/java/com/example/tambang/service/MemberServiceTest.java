@@ -76,6 +76,7 @@ public class MemberServiceTest {
         String encodedPassword = passwordEncoder.encode(TEST_PASSWORD);
 
         member.createMember(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
+
         member.grantAuthority("USER");
         memberService.join(member);
 
