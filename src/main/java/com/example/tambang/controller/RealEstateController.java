@@ -1,5 +1,7 @@
 package com.example.tambang.controller;
 
+import com.example.tambang.domain.Address;
+import com.example.tambang.domain.BuildInfo;
 import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.RealEstate;
 import com.example.tambang.service.RealEstateServiceImpl;
@@ -23,12 +25,6 @@ public class RealEstateController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final RealEstateServiceImpl realEstateService;
-
-    @GetMapping("/test")
-    @Operation(summary = "test", description = "test")
-    public String test(){
-        return "test";
-    }
 
     //@RequestPart 어노테이션을 활용해 여러 유형의 request body를 한 번에 매핑할 수 있다.
     //매물 등록 요청

@@ -5,6 +5,7 @@ import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.Member;
 import com.example.tambang.domain.RealEstate;
 import com.example.tambang.domain.RealEstateFacility;
+import com.example.tambang.dto.MemberCreateRequestDto;
 import com.example.tambang.repository.MemberRepository;
 import com.example.tambang.repository.RealEstateRepository;
 import org.assertj.core.api.Assertions;
@@ -20,6 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.Assert.*;
@@ -34,7 +36,7 @@ public class RealEstateServiceTest {
     @Autowired
     RealEstateRepository realEstateRepository;
     @Autowired
-    MemberRepository memberRepository;
+    MemberService memberService;
     @Autowired
     EntityManager em;
 
@@ -66,9 +68,8 @@ public class RealEstateServiceTest {
                 TEST_BUILD_TYPE, TEST_FLOOR, TEST_AREA, TEST_DEAL_TYPE,TEST_PRICE,TEST_DEPOSIT,TEST_MONTHLY_PAY,
                 TEST_DESCRIPTION, TEST_IMAGE);
 
-        Member member = new Member();
-        member.createMember(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
-        memberRepository.save(member);
+        MemberCreateRequestDto requestDto = new MemberCreateRequestDto(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
+        memberService.join(requestDto);
 
         //when
         Long savedId = realEstateService.register(realEstate, TEST_EMAIL);
@@ -88,11 +89,11 @@ public class RealEstateServiceTest {
                 TEST_BUILD_TYPE, TEST_FLOOR, TEST_AREA, TEST_DEAL_TYPE,TEST_PRICE,TEST_DEPOSIT,TEST_MONTHLY_PAY,
                 TEST_DESCRIPTION, TEST_IMAGE);
 
-        Member member = new Member();
-        member.createMember(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
+        MemberCreateRequestDto requestDto = new MemberCreateRequestDto(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
+        String memberEmail = memberService.join(requestDto);
+        Member member = memberService.findByEmail(memberEmail).get();
 
         //when
-        memberRepository.save(member);
         realEstate.setOwner(member);
         realEstateRepository.save(realEstate, member.getEmail());
         RealEstate findRealEstate = realEstateService.findOneById(realEstate.getId());
@@ -112,11 +113,11 @@ public class RealEstateServiceTest {
                 TEST_BUILD_TYPE, TEST_FLOOR, TEST_AREA, TEST_DEAL_TYPE,TEST_PRICE,TEST_DEPOSIT,TEST_MONTHLY_PAY,
                 TEST_DESCRIPTION, TEST_IMAGE);
 
-        Member member = new Member();
-        member.createMember(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
+        MemberCreateRequestDto requestDto = new MemberCreateRequestDto(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
+        String memberEmail = memberService.join(requestDto);
+        Member member = memberService.findByEmail(memberEmail).get();
 
         //when
-        memberRepository.save(member);
         realEstate.setOwner(member);
         realEstateRepository.save(realEstate, member.getEmail());
         RealEstate findRealEstate = realEstateService.findOneById(0L); //id는 1부터 시작하기 때문에, 0은 있을 수 없다.

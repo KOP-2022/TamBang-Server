@@ -3,6 +3,7 @@ package com.example.tambang.service;
 import com.example.tambang.configuration.jwt.JwtProvider;
 import com.example.tambang.configuration.security.UserDetailsImpl;
 import com.example.tambang.domain.Member;
+import com.example.tambang.dto.MemberCreateRequestDto;
 import com.example.tambang.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,17 +27,19 @@ public class MemberServiceImpl implements MemberService {
     private final JwtProvider jwtProvider; // 토큰 util 관리
     @Transactional
     @Override
-    public String join(Member member) {
-        validateDuplicateMember(member);
-        // 비밀번호 암호화 (BCrypt algorithm 사용)
-        member.setEncodedPasswd(passwordEncoder.encode(member.getPassword()));
+    public String join(MemberCreateRequestDto requestDto) {
+        validateDuplicateMember(requestDto);
+        Member member = Member.createMember(requestDto);
+
+        member.setEncodedPasswd(passwordEncoder.encode(member.getPassword())); // 비밀번호 암호화 (BCrypt algorithm 사용)
+        member.grantAuthority("USER"); // USER 권한 부여 (기본)
 
         memberRepository.save(member);
         return member.getEmail();
     }
 
-    private void validateDuplicateMember(Member member) {
-        Optional<Member> findMember = memberRepository.findOne(member.getEmail());
+    private void validateDuplicateMember(MemberCreateRequestDto requestDto) {
+        Optional<Member> findMember = memberRepository.findOne(requestDto.getEmail());
 
         if(findMember.isPresent()){
             throw new IllegalStateException("이미 존재하는 아이디입니다.");

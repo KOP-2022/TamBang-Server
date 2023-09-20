@@ -1,11 +1,10 @@
 package com.example.tambang.controller;
 
+import com.example.tambang.domain.Address;
+import com.example.tambang.domain.BuildInfo;
 import com.example.tambang.domain.FacilityCategory;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

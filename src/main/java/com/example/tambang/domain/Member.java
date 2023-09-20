@@ -1,12 +1,15 @@
 package com.example.tambang.domain;
 
+import com.example.tambang.dto.MemberCreateRequestDto;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)//직접 생성한 값을 기본키로 설정한다.
@@ -29,13 +32,22 @@ public class Member {
     private String suspensionYN;
 
     //생성자 메서드로 사용하자.
-    public void createMember(String email, String password, String name, String nickname, String phoneNumber){
+    public static Member createMember(MemberCreateRequestDto requestDto){
+        return new Member(requestDto.getEmail(),
+                requestDto.getPassword(),
+                requestDto.getName(),
+                requestDto.getNickname(),
+                requestDto.getPhoneNumber());
+    }
+
+    private Member(String email, String password, String name, String nickname, String phoneNumber) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
     }
+
     public void grantAuthority(String authority){
         this.authority = authority;
     }

@@ -1,6 +1,9 @@
 package com.example.tambang.controller;
 
 import com.example.tambang.domain.Member;
+import com.example.tambang.dto.CommonResponseDto;
+import com.example.tambang.dto.MemberCreateRequestDto;
+import com.example.tambang.dto.MemberCreateResult;
 import com.example.tambang.service.MemberService;
 import com.example.tambang.service.RealEstateService;
 import lombok.RequiredArgsConstructor;
@@ -62,33 +65,15 @@ public class MainController {
     //회원 서비스
     @ResponseBody
     @PostMapping("/members")
-    public ResponseVO.LoginResponse createMember(@RequestBody Form.MemberForm form){
-        ResponseVO.LoginResponse responseBody = new ResponseVO.LoginResponse();
-//        System.out.println("param: " + form.getEmail() + " " + form.getPassword());
-        Member member = new Member();
-        member.createMember(form.getEmail(), form.getPassword(), form.getName(), form.getNickname(), form.getPhoneNumber());
-        // 일단 기본적으로 USER 권한 부여
-        member.grantAuthority("USER");
-        
-        System.out.println("member = " + member);
-        try{
-            //중복된 아이디로 가입하는 경우 IllegalStateException 발생
-            String memberId = memberService.join(member);
-        }
-        catch(IllegalStateException e){
-            //Exception 발생 시에는 로그인 실패 결과를 전달
-            String msg = "회원 가입에 실패했습니다.";
+    public CommonResponseDto<MemberCreateResult> createMember(@RequestBody MemberCreateRequestDto requestDto){
+        String memberEmail = memberService.join(requestDto);
 
-            responseBody.setSuccess(false);
-            responseBody.getData().put("message", msg);
+        MemberCreateResult result = new MemberCreateResult(memberEmail);
 
-            return responseBody;
-        }
-        //성공한 경우 멤버 이메일 정보와 함께 로그인 성공을 알린다.
-        responseBody.setSuccess(true);
-        responseBody.getData().put("email", member.getEmail());
-
-        return responseBody;
+        return CommonResponseDto.<MemberCreateResult>builder()
+                .success(true)
+                .data(result)
+                .build();
     }
 
     //회원 정보 조회

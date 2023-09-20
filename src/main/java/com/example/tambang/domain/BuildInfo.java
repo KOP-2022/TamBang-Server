@@ -1,4 +1,4 @@
-package com.example.tambang.controller;
+package com.example.tambang.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
