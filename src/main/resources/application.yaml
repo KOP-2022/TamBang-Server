@@ -15,9 +15,19 @@ spring:
       ddl-auto: update  # option type: create, create-drop, update, validate, none
     properties:
       hibernate:
-        show_sql: true  # sql 쿼리를 보여줍니다.
+        show_sql: true
         format_sql: true  # sql query formatting
-        use_sql_comments: true  # sql 쿼리의 추가정보를 보여줍니다.
+        use_sql_comments: true  # sql more information
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html # url setting
+    enabled: true
+  packages-to-scan: com.example.tambang.controller # packages to scan
+  paths-to-match: /** # path to scan
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+
 
 logging:
   level:
@@ -37,4 +47,4 @@ server:
     key-alias: tomcat
 
 jwt:
-  password: hello_world_tambang # secret key로 사용될 예정
+  password: hello_world_tambang # secret key

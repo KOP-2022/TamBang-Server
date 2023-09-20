@@ -70,21 +70,21 @@ public class MemberServiceTest {
 
     @Test
     @DisplayName("로그인 테스트")
-    public void 로그인() throws Exception{
+    public void 로그인() {
         //given
         Member member = new Member();
-        String testPassword = "test_passwd";
-        String encodedPassword = passwordEncoder.encode(testPassword);
+        String encodedPassword = passwordEncoder.encode(TEST_PASSWORD);
 
-        member.createMember("test_id@kw.ac.kr", testPassword, "kang", "kkkdh", "010-6666-5555");
+        member.createMember(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
+
         member.grantAuthority("USER");
         memberService.join(member);
 
         //when
-        String jwt = memberService.login("test_id@kw.ac.kr", testPassword);
+        String jwt = memberService.login(TEST_EMAIL, TEST_PASSWORD);
 
         //then
-        boolean isMatch = passwordEncoder.matches(testPassword, encodedPassword);
+        boolean isMatch = passwordEncoder.matches(TEST_PASSWORD, encodedPassword);
         assertThat(isMatch).isEqualTo(true);
         assertThat(jwt).isNotEqualTo("");
     }
@@ -94,14 +94,13 @@ public class MemberServiceTest {
     public void 로그인_실패() {
         //given
         Member member = new Member();
-        String testPassword = "test_passwd";
-        String encodedPassword = passwordEncoder.encode(testPassword);
+        String encodedPassword = passwordEncoder.encode(TEST_PASSWORD);
 
-        member.createMember("test_id@kw.ac.kr", encodedPassword, "kang", "kkkdh", "010-6666-5555");
+        member.createMember(TEST_EMAIL, encodedPassword, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
         memberService.join(member);
 
         //when
-        String jwt = memberService.login("test_id@kw.ac.kr", "test");
+        String jwt = memberService.login(TEST_EMAIL, TEST_PASSWORD);
 
         //then
         assertThat(jwt).isEqualTo(""); // 로그인 실패한 경우 빈 토큰이 발급된다.

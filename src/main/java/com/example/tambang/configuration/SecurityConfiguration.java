@@ -20,6 +20,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
     private final JwtProvider jwtProvider;
 
+    private String[] swaggerPaths = {
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
+    };
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -32,6 +38,7 @@ public class SecurityConfiguration {
                 .cors().and()
                     .authorizeRequests()
                     .antMatchers("/login", "/sign-up", "/members").permitAll()
+                    .antMatchers(swaggerPaths).permitAll() // swagger 관련 권한 허용
                     // 모든 조회 요청은 기본적으로 허용
                     .antMatchers(HttpMethod.GET, "/members/**", "/real-estates/**", "/map/**").permitAll()
                     // 그 외의 나머지 요청은 USER 권한이 있어야 한다.
