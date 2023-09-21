@@ -1,11 +1,10 @@
 package com.example.tambang.controller;
 
 import com.example.tambang.domain.Member;
-import com.example.tambang.dto.CommonResponseDto;
-import com.example.tambang.dto.MemberCreateRequestDto;
-import com.example.tambang.dto.MemberCreateResult;
+import com.example.tambang.dto.*;
 import com.example.tambang.service.MemberService;
 import com.example.tambang.service.RealEstateService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
@@ -98,16 +97,16 @@ public class MainController {
     }
 
     @GetMapping("/map")
-    public ResponseVO.RealEstateListResponse getRealEstateListInRadius(
-            @RequestParam(required = true) Double latitude,
-            @RequestParam(required = true) Double longitude,
-            @RequestParam(required = true) Double radius){
-        // 기준 좌표 중심으로 radius 거리 내의 모든 매물을 조회
-        List<ResponseVO.RealEstateVO> aroundRealEstates = realEstateService.getAroundRealEstates(latitude, longitude, radius);
-        // response body를 만든다.
-        ResponseVO.RealEstateListResponse responseBody = new ResponseVO.RealEstateListResponse(true, aroundRealEstates);
+    @Operation(description = "기준 좌표 중심으로 radius 거리 내의 모든 부동산 조회")
+    public CommonResponseDto<RealEstateResults> getRealEstateListInRadius(RealEstateCoordinateRequestDto requestDto){
+        List<RealEstateResult> aroundRealEstateList = realEstateService
+                .getAroundRealEstates(requestDto.getLatitude(), requestDto.getLongitude(), requestDto.getRadius());
+        RealEstateResults resultList = new RealEstateResults(aroundRealEstateList, aroundRealEstateList.size());
 
-        return responseBody;
+        return CommonResponseDto.<RealEstateResults>builder()
+                .data(resultList)
+                .success(true)
+                .build();
     }
 
     private void addCookie(HttpServletResponse response, String name, String value, int maxAge){

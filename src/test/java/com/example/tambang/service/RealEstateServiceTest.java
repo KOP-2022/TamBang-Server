@@ -6,6 +6,7 @@ import com.example.tambang.domain.Member;
 import com.example.tambang.domain.RealEstate;
 import com.example.tambang.domain.RealEstateFacility;
 import com.example.tambang.dto.MemberCreateRequestDto;
+import com.example.tambang.dto.RealEstateResult;
 import com.example.tambang.repository.MemberRepository;
 import com.example.tambang.repository.RealEstateRepository;
 import org.assertj.core.api.Assertions;
@@ -174,9 +175,9 @@ public class RealEstateServiceTest {
         em.persist(realEstate);
 
         //when
-        List<ResponseVO.RealEstateVO> aroundRealEstates = realEstateService.getAroundRealEstates(des_latitude, des_longitude, radius);
+        List<RealEstateResult> aroundRealEstateList = realEstateService.getAroundRealEstates(des_latitude, des_longitude, radius);
 
         //then
-        assertThat(aroundRealEstates.size()).isNotEqualTo(0);
+        assertThat(aroundRealEstateList.size()).isNotEqualTo(0);
     }
 }

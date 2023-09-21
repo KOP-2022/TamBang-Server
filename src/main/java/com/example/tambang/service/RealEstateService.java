@@ -4,6 +4,7 @@ import com.example.tambang.controller.Form;
 import com.example.tambang.controller.ResponseVO;
 import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.RealEstate;
+import com.example.tambang.dto.RealEstateResult;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
@@ -23,7 +24,7 @@ public interface RealEstateService {
 
     List<JSONObject> getFacilityResponse(MultiValueMap<String, String> params, Form.RealEstateForm form, String email);
 
-    List<ResponseVO.RealEstateVO> getAroundRealEstates(double latitude, double longitude, double radius);
+    List<RealEstateResult> getAroundRealEstates(double latitude, double longitude, double radius);
 
     List<Facility> getAroundFacilities(Long realEstateId);
 }

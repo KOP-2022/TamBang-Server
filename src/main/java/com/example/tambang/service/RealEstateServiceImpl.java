@@ -7,6 +7,7 @@ import com.example.tambang.domain.Facility;
 import com.example.tambang.domain.FacilityCategory;
 import com.example.tambang.domain.RealEstate;
 import com.example.tambang.domain.RealEstateFacility;
+import com.example.tambang.dto.RealEstateResult;
 import com.example.tambang.repository.FacilityRepository;
 import com.example.tambang.repository.RealEstateRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -218,22 +219,20 @@ public class RealEstateServiceImpl implements RealEstateService {
         return facilities;
     }
 
-    public List<ResponseVO.RealEstateVO> getAroundRealEstates(double latitude, double longitude, double radius){
+    public List<RealEstateResult> getAroundRealEstates(double latitude, double longitude, double radius){
         List<RealEstate> realEstates = realEstateRepository.findAll();
-        List<ResponseVO.RealEstateVO> inRangeRealEstates = new ArrayList<>();
+        List<RealEstateResult> inRangeRealEstateList = new ArrayList<>();
 
         for (RealEstate realEstate : realEstates) {
             double distance = getDistance(latitude, longitude, realEstate.getLatitude(), realEstate.getLongitude());
-//            System.out.println("realEstate.getLatitude() = " + realEstate.getLatitude() + " longitude: " + realEstate.getLongitude());
-//            System.out.println("distance = " + distance + ", " + radius);
-            // radius 범위 이내의 매물을 리스트에 추가한다.
+
             if(distance <= radius){
-                ResponseVO.RealEstateVO realEstateVO = new ResponseVO.RealEstateVO(realEstate.getId(), realEstate.getLatitude(), realEstate.getLongitude());
-                inRangeRealEstates.add(realEstateVO);
+                RealEstateResult realEstateVO = new RealEstateResult(realEstate.getId(), realEstate.getLatitude(), realEstate.getLongitude());
+                inRangeRealEstateList.add(realEstateVO);
             }
         }
 
-        return inRangeRealEstates;
+        return inRangeRealEstateList;
     }
 
     private double getDistance(double aLat, double aLon, double bLat, double bLon){
