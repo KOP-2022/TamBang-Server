@@ -6,6 +6,7 @@ import com.example.tambang.domain.Member;
 import com.example.tambang.domain.RealEstate;
 import com.example.tambang.domain.RealEstateFacility;
 import com.example.tambang.dto.MemberCreateRequestDto;
+import com.example.tambang.dto.MemberSearchResult;
 import com.example.tambang.dto.RealEstateResult;
 import com.example.tambang.repository.MemberRepository;
 import com.example.tambang.repository.RealEstateRepository;
@@ -92,11 +93,10 @@ public class RealEstateServiceTest {
 
         MemberCreateRequestDto requestDto = new MemberCreateRequestDto(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
         String memberEmail = memberService.join(requestDto);
-        Member member = memberService.findByEmail(memberEmail).get();
+        MemberSearchResult result = memberService.findByEmail(memberEmail);
 
         //when
-        realEstate.setOwner(member);
-        realEstateRepository.save(realEstate, member.getEmail());
+        realEstateRepository.save(realEstate, result.getEmail());
         RealEstate findRealEstate = realEstateService.findOneById(realEstate.getId());
 
         //then
@@ -116,15 +116,14 @@ public class RealEstateServiceTest {
 
         MemberCreateRequestDto requestDto = new MemberCreateRequestDto(TEST_EMAIL, TEST_PASSWORD, TEST_NAME, TEST_NICKNAME, TEST_PHONE_NUMBER);
         String memberEmail = memberService.join(requestDto);
-        Member member = memberService.findByEmail(memberEmail).get();
+        MemberSearchResult result = memberService.findByEmail(memberEmail);
 
         //when
-        realEstate.setOwner(member);
-        realEstateRepository.save(realEstate, member.getEmail());
+        realEstateRepository.save(realEstate, result.getEmail());
         RealEstate findRealEstate = realEstateService.findOneById(0L); //id는 1부터 시작하기 때문에, 0은 있을 수 없다.
 
         //then
-        assertThat(findRealEstate).isNotEqualTo(member); //하나는 null이더라도, 동등성 판단이 가능한듯
+        assertThat(findRealEstate).isNull(); //하나는 null이더라도, 동등성 판단이 가능한듯
     }
 
     @Test

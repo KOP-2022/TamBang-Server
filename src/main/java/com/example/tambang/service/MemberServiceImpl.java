@@ -4,6 +4,7 @@ import com.example.tambang.configuration.jwt.JwtProvider;
 import com.example.tambang.configuration.security.UserDetailsImpl;
 import com.example.tambang.domain.Member;
 import com.example.tambang.dto.MemberCreateRequestDto;
+import com.example.tambang.dto.MemberSearchResult;
 import com.example.tambang.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,8 +84,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Optional<Member> findByEmail(String email){
-        Optional<Member> member = memberRepository.findOne(email);
-        return member;
+    public MemberSearchResult findByEmail(String email){
+        Member member = memberRepository.findOne(email)
+                .orElseThrow(() -> new IllegalStateException("적절한 member id가 아닙니다."));
+        return new MemberSearchResult(member);
     }
 }

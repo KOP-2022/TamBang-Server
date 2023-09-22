@@ -25,7 +25,7 @@ public class MainController {
     private final RealEstateService realEstateService;
 
     @PostMapping("/login") //json을 반환하는 post request handler
-    public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response, @RequestBody Form.LoginForm form){
+    public Map<String, Object> login(HttpServletResponse response, @RequestBody Form.LoginForm form){
         String jwtCreatedByLogin = memberService.login(form.getEmail(), form.getPassword());
         Map<String, Object> responseBody = new HashMap<>();
 
@@ -40,14 +40,8 @@ public class MainController {
         addCookie(response, "jwt", jwtCreatedByLogin, 3600);
 
         //로그인 요청을 보낸 고객 정보로 jwt 생성에 성공한 경우
-        if(jwtCreatedByLogin != ""){
-            //로그인의 성공 여부를 작성해서 반환한다.
-            responseBody.put("success", true);
-        }
-        //로그인 요청을 보낸 고객 정보로 member entity가 없는 경우
-        else{
-            responseBody.put("success", false);
-        }
+        boolean isSuccess = !jwtCreatedByLogin.isEmpty();
+        responseBody.put("success", isSuccess);
 
         return responseBody;
     }
@@ -77,23 +71,13 @@ public class MainController {
 
     //회원 정보 조회
     @GetMapping("/members/{member-email}")
-    public ResponseVO.MemberResponse getMember(@PathVariable("member-email") String memberEmail){
-        ResponseVO.MemberResponse responseBody = null;
-
-        Optional<Member> findMemberOpt = memberService.findByEmail(memberEmail);
+    public CommonResponseDto<MemberSearchResult> getMember(@PathVariable("member-email") String memberEmail){
+        MemberSearchResult result = memberService.findByEmail(memberEmail);
         //회원 조회 성공한 경우 회원 정보와 함께 반환
-        if(findMemberOpt.isPresent()){
-            Member findMember = findMemberOpt.get();
-            responseBody = new ResponseVO.MemberResponse(
-                true, findMember.getEmail(), findMember.getName(), findMember.getNickname(), findMember.getPhoneNumber()
-            );
-
-            return responseBody;
-        }
-        //회원 조회에 실패한 경우 실패 여부만 반환
-        responseBody = new ResponseVO.MemberResponse(false);
-
-        return responseBody;
+        return CommonResponseDto.<MemberSearchResult>builder()
+                .data(result)
+                .success(true)
+                .build();
     }
 
     @GetMapping("/map")

@@ -32,33 +32,6 @@ public class ResponseVO {
     }
 
     @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class LoginResponse{
-        private Boolean success;
-        private HashMap<String, String> data = new HashMap<>();
-    }
-
-    @Getter
-    public static class MemberResponse{
-        private Boolean success;
-        private Map<String, String> data = new HashMap<>();
-
-        public MemberResponse(Boolean success, String email, String name, String nickname, String phoneNumber) {
-            this.success = success;
-            this.data.put("email", email);
-            this.data.put("name", name);
-            this.data.put("nickname", nickname);
-            this.data.put("phone_number", phoneNumber);
-        }
-
-        public MemberResponse(Boolean success){
-            this.success = success;
-        }
-    }
-
-    @Getter
     @AllArgsConstructor
     public static class FacilityVO{
         private Long id;
@@ -81,19 +54,5 @@ public class ResponseVO {
     public static class FacilityResponse{
         private boolean success;
         private List<FacilityVO> data;
-    }
-    @Getter
-    @AllArgsConstructor
-    public static class RealEstateVO{
-        private Long id;
-        private Double latitude;
-        private Double longitude;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class RealEstateListResponse{
-        private boolean success;
-        private List<RealEstateVO> data;
     }
 }
